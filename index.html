@@ -425,6 +425,69 @@ h3.sec{font-size:1.2rem;margin-top:2px}
 #mheard.on{outline:3px solid var(--coral)}
 body.listening .bub.kb{box-shadow:0 0 0 3px #DD6A50}
 
+/* ---- games v5 ---- */
+.gk{display:flex;flex-direction:column;gap:8px}
+.gkhead{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:4px 10px;min-height:66px}
+.gkav{width:44px;height:66px;flex:0 0 auto}.gkav svg{width:100%;height:100%}
+.gkbub{flex:1;min-width:0;font-family:var(--display);font-weight:800;font-size:1.15rem;line-height:1.2}
+.gkbar{height:12px;background:var(--sunk);border-radius:99px;overflow:hidden}.gkbar i{display:block;height:100%;width:0;background:var(--sun);border-radius:99px;transition:width .4s}
+.gkarena{position:relative;height:min(58vh,520px);border-radius:24px;overflow:hidden;background:var(--surface);border:2px solid var(--line);touch-action:none;-webkit-user-select:none;user-select:none}
+.gkarena.sky{background:linear-gradient(#9FD8F7,#E3F4FD)}
+.gkarena.pond{background:linear-gradient(#7FD3E8,#2E8FB0)}
+.gkarena.cards,.gkarena.pads{height:auto;min-height:300px;padding:12px;background:var(--surface);overflow:visible}
+.gkfoot{display:flex;align-items:center;gap:10px;min-height:72px}
+.gkme{width:48px;height:76px;flex:0 0 auto}.gkme svg{width:100%;height:100%}
+.gkfb{flex:1;min-width:0;font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--teal)}
+.gkfb.pop{animation:fbpop .4s ease-out}@keyframes fbpop{from{transform:scale(1.25)}}
+.cloud{position:absolute;width:120px;height:40px;background:#fff;border-radius:40px;opacity:.85}.cloud::before{content:"";position:absolute;width:56px;height:56px;border-radius:50%;background:#fff;left:22px;top:-26px}
+.cloud.c1{left:6%;top:12%}.cloud.c2{right:4%;top:40%;transform:scale(.8)}
+.gkballoon{position:absolute;left:0;top:0;width:96px;height:144px;padding:0;background:none;border:0;will-change:transform}
+.gkballoon svg{width:100%;height:100%;pointer-events:none}
+.gkballoon.popped{transform-origin:center;opacity:0;transition:opacity .2s}
+.gkballoon.fly{transition:transform .6s ease-in,opacity .6s;opacity:0}
+.gkfish{position:absolute;left:0;top:0;width:120px;height:72px;padding:0;background:none;border:0;will-change:transform}
+.gkfish svg{width:100%;height:100%;pointer-events:none}
+.gkfish.catch{transition:transform .45s ease-in}
+.bucket{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-size:3rem;display:flex;align-items:center;gap:4px}
+.bucket span{font-family:var(--display);font-weight:800;font-size:1.4rem;background:#fff;border-radius:99px;padding:0 10px;color:#1D3B3A}
+.weed{position:absolute;bottom:0;width:18px;height:90px;background:#2E7D32;border-radius:18px 18px 0 0;opacity:.6}.weed.w1{left:8%}.weed.w2{right:10%;height:70px}
+.gkbanner{position:absolute;inset:auto 8% 40% 8%;background:rgba(255,255,255,.95);border-radius:22px;padding:16px;text-align:center;font-family:var(--display);font-weight:800;font-size:1.7rem;color:#1D3B3A;box-shadow:0 6px 0 rgba(0,0,0,.15);z-index:6;animation:fbpop .4s}
+.gkbit{position:absolute;width:12px;height:12px;border-radius:3px;pointer-events:none;animation:bit .6s ease-out forwards}@keyframes bit{to{transform:translate(var(--dx),var(--dy)) rotate(200deg);opacity:0}}
+.gkstar{position:absolute;font-size:2.2rem;pointer-events:none;transform:translate(-50%,-50%);animation:starup .9s ease-out forwards;z-index:7}@keyframes starup{to{transform:translate(-50%,-180px) scale(1.4);opacity:0}}
+.gkstop{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;max-width:560px;margin:0 auto;background:#FFF5F0;border:4px solid #E2453C;border-radius:26px;box-shadow:0 10px 30px rgba(0,0,0,.25);display:grid;grid-template-columns:auto 1fr;grid-template-areas:"h b" "h p" "g g";column-gap:14px;row-gap:4px;align-items:center;padding:14px 16px;animation:up .25s ease-out}
+.gkstop .hand{grid-area:h;font-size:2.8rem;background:#E2453C;border-radius:50%;width:78px;height:78px;display:grid;place-items:center;box-shadow:0 0 0 8px rgba(226,69,60,.22);animation:pulse 1s ease-in-out infinite}
+.gkstop b{grid-area:b;font-family:var(--display);font-size:2rem;color:#C62828;line-height:1}
+.gkstop p{grid-area:p;font-family:var(--display);font-weight:700;font-size:1.2rem;color:#1D3B3A;margin:0;line-height:1.25}
+.gkstop .btn{grid-area:g;margin-top:6px}
+.gkwrong{animation:shakeit .5s ease-in-out 2!important;filter:grayscale(.3);outline:5px solid #E2453C;outline-offset:2px;border-radius:18px;z-index:11;position:relative}
+@keyframes shakeit{20%,60%{translate:-10px 0}40%,80%{translate:10px 0}}
+.gkright{box-shadow:0 0 0 6px rgba(67,160,71,.6)!important;border-radius:18px;animation:pulse 1s ease-in-out infinite;z-index:11}
+.gkballoon.gkwrong,.gkfish.gkwrong,.gkballoon.gkright,.gkfish.gkright{position:absolute;outline-offset:-4px}
+.g6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.pic5,.pad5{aspect-ratio:1;max-width:100%;border-radius:22px;background:var(--surface);border:4px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 var(--line);touch-action:manipulation}
+.pic5 span{font-size:3rem;line-height:1}.pic5 small{font-weight:700;color:var(--muted)}
+.pic5:disabled{opacity:.6}.pic5.ok,.pad5.ok{border-color:var(--good);background:var(--teal-soft)}
+.pad5{background:var(--pc,var(--surface))}.pad5 span{font-size:3.8rem;line-height:1}.pad5 small{font-weight:800;color:#1D3B3A}
+.pad5.big span{font-size:4.4rem}
+.pad5.lit{transform:scale(1.07);border-color:#F2A93B;box-shadow:0 0 0 8px rgba(242,169,59,.5)}
+.ears{text-align:center;font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--teal);margin-top:10px}
+.gpairs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.card5{aspect-ratio:3/4;max-width:100%;border-radius:16px;border:0;padding:0;position:relative;background:none;perspective:600px}
+.card5 .back,.card5 .front{position:absolute;inset:0;border-radius:16px;display:grid;place-items:center;backface-visibility:hidden;transition:transform .45s}
+.card5 .back{background:linear-gradient(135deg,#2A8178,#56B8AD);color:#fff;font-family:var(--display);font-size:2rem;font-weight:800;box-shadow:0 4px 0 #1E5E57}
+.card5 .front{background:#fff;border:3px solid var(--line);font-size:2.6rem;transform:rotateY(180deg)}
+.card5.up .back{transform:rotateY(180deg)}.card5.up .front{transform:rotateY(0)}
+.card5.ok .front{border-color:var(--good);background:#E8F5E9}
+.cnt{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:6px}
+.cobj{width:84px;height:84px;border-radius:20px;background:var(--surface);border:3px solid var(--line);font-size:2.8rem;position:relative;animation:appear .4s backwards;touch-action:manipulation}
+@keyframes appear{from{transform:scale(0)}}
+.cobj b{position:absolute;top:-10px;right:-10px;min-width:30px;height:30px;border-radius:15px;background:var(--sun);color:#3A2600;font-family:var(--display);font-size:1.1rem;display:grid;place-items:center;visibility:hidden}
+.cobj.done{background:var(--teal-soft);border-color:var(--teal)}.cobj.done b{visibility:visible}
+.nums{display:flex;gap:12px;justify-content:center;margin-top:14px}
+.numb{width:90px;height:90px;border-radius:24px;font-family:var(--display);font-size:2.6rem;font-weight:800;background:var(--sun-soft);border:3px solid var(--sun);box-shadow:0 5px 0 #D9902C}
+.numb.ok{background:var(--teal-soft);border-color:var(--good)}
+
 </style>
 </head><body><div class="wrap" id="app"></div>
 <script>
@@ -1304,95 +1367,217 @@ async function runChat(id){
   cue('yay');say('Bye! Kal phir baat karenge!',{...getChar('aarav').v,g:'m'});
 }
 
-/* ================= FOCUS GAMES ================= */
-const G_say=t=>say(t,NARR);
-const intro=(title,ic,text,start)=>{app().innerHTML=`${topBar(title)}<div class="stage">${ME(115)}<div class="bubble"><span class="q">${text}</span>${sayBtn(text.replace(/<[^>]+>/g,''))}</div></div><div class="gameicon">${ic}</div><button class="btn big sun" id="gs">Shuru karo</button>`;G_say(text.replace(/<[^>]+>/g,''));$('#gs').onclick=start};
+/* =====================================================================
+   DHYAAN GAMES v5 — slow, big touch targets, and "Ruko!" on a wrong action.
+   Every wrong tap pauses the game, shows what was wrong and what was right,
+   explains in a calm voice, then the game continues from the same place.
+   ===================================================================== */
+const gSpeed=()=>PROFILE.gameSpeed==='normal'?1:.7;
+const gState=k=>{PROG.games=PROG.games||{};return PROG.games[k]||(PROG.games[k]={lv:1,best:0,plays:0})};
+const tapOn=(el,fn)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();fn(e)},{passive:false})};
+const rectIn=(el,host)=>{const a=el.getBoundingClientRect(),b=host.getBoundingClientRect();return {x:a.left-b.left+a.width/2,y:a.top-b.top+a.height/2}};
+const BCOL={laal:'#E53935',neela:'#1E88E5',hara:'#43A047',peela:'#FDD835',narangi:'#FB8C00',gulabi:'#EC407A'};
+const fem=c=>adj(c,'f');
 
-/* 1. Laal Gubbare — go / no-go (impulse control) */
-SCREENS.gonogo=()=>intro('Laal Gubbare','🎈','Sirf <span style="color:var(--red-b)">LAAL</span> gubbare phodo. Baaki ko mat chhuna!',()=>{
-  const G={hits:0,miss:0,wrong:0,good:0,total:0,left:45};
-  app().innerHTML=`${topBar('Laal Gubbare')}<div class="hud"><span>🎈 <span id="gh">0</span></span><span id="gt">45s</span></div><div class="arena" id="ar"></div><div class="feedback" id="gf"></div>`;
-  const ar=$('#ar'),cols=['red','red','red','red','red','red','blue','green','yellow','blue'],cv={red:'var(--red-b)',blue:'var(--blue-b)',green:'var(--green-b)',yellow:'var(--yellow-b)'};
-  const spawn=()=>{const c=pick(cols);G.total++;const b=document.createElement('button');b.className='balloon';b.style.background=cv[c];b.style.left=(6+Math.random()*(ar.clientWidth-96))+'px';b.style.top=(30+Math.random()*(ar.clientHeight-180))+'px';const life=Math.max(1100,1700-G.total*8);b.style.animationDuration=life+'ms';let d=false;
-    b.onclick=()=>{if(d)return;d=true;b.classList.add('pop');if(c==='red'){G.hits++;cue('pop');$('#gf').textContent=pick(['Shabaash!','Badhiya!','Wah!']);$('#gh').textContent=G.hits}else{G.wrong++;$('#gf').textContent='Ruko! Sirf laal wale.'}setTimeout(()=>b.remove(),250)};
-    ar.appendChild(b);TIMERS.push(setTimeout(()=>{if(!d){d=true;if(c==='red')G.miss++;else G.good++;b.remove()}},life))};
-  TIMERS.push(setInterval(spawn,1000));
-  TIMERS.push(setInterval(()=>{G.left--;const t=$('#gt');if(t)t.textContent=G.left+'s';if(G.left<=0){stopTimers();const acc=G.total?Math.round(100*(G.hits+G.good)/G.total):0,st=acc>=85?3:acc>=65?2:1;logAct('gonogo',st,{acc,wrong:G.wrong,hits:G.hits});celebrate(st,`${G.hits} laal gubbare phode!`,'gonogo')}},1000));
-});
+function gameKit(key,title,guide,arenaCls){
+  stopTimers();
+  app().innerHTML=`<div class="gk">${topBar(title,`<span class="starpill" id="gks">⭐ 0</span>`)}
+   <div class="gkhead"><div class="gkav" id="gkav">${charSVG(getChar(guide),'happy','idle')}</div><div class="gkbub" id="gkt">…</div><button class="say" id="gkr" aria-label="Phir se suno">🔊</button></div>
+   <div class="gkbar"><i id="gkp"></i></div>
+   <div class="gkarena ${arenaCls||''}" id="gka"></div>
+   <div class="gkfoot"><div class="gkme" id="gkme">${charSVG(kidLook(),'happy','idle')}</div><div class="gkfb" id="gkfb"></div></div></div>`;
+  const C=getChar(guide);
+  const G={key,stars:0,stops:0,paused:false,ended:false,line:'',ar:$('#gka')};window.__G=G;
+  G.alive=()=>current===key&&!G.ended&&document.body.contains(G.ar);
+  G.say=async(t)=>{if(!G.alive())return;G.line=t;const b=$('#gkt');if(b)b.textContent=T(t);const a=$('#gkav .chr');a&&a.classList.add('talking');await say(t,{...(C.v||{}),g:C.g||'f'});const a2=$('#gkav .chr');a2&&a2.classList.remove('talking')};
+  $('#gkr').onclick=()=>G.say(G.line);
+  G.progress=f=>{const p=$('#gkp');if(p)p.style.width=Math.max(0,Math.min(100,f*100))+'%'};
+  G.me=(emo,g)=>{const m=$('#gkme');if(m)m.innerHTML=charSVG(kidLook(),emo,g||'idle')};
+  G.fb=t=>{const f=$('#gkfb');if(f){f.textContent=T(t);f.classList.remove('pop');void f.offsetWidth;f.classList.add('pop')}};
+  G.streak=0;
+  G.good=(el,msg)=>{G.stars++;G.streak++;const s=$('#gks');if(s)s.textContent='⭐ '+G.stars;sfx('pop');buzz(18);G.me('happy','clap');
+    if(el&&G.ar.contains(el)){const p=rectIn(el,G.ar),st=document.createElement('span');st.className='gkstar';st.textContent='⭐';st.style.left=p.x+'px';st.style.top=p.y+'px';G.ar.appendChild(st);setTimeout(()=>st.remove(),900)}
+    const m=msg||(G.streak%3===0?pick(['Wah! Teen ek saath!','Kamaal! Aise hi!','Super dhyaan!']):pick(['Shabaash!','Sahi!','Badhiya!','Haan!']));G.fb(m);if(G.streak%3===0||msg)say(m,NARR);
+    setTimeout(()=>G.alive()&&G.me('happy','idle'),900)};
+  G.stop=async(msg,o={})=>{
+    if(!G.alive())return;G.paused=true;G.stops++;G.streak=0;try{navigator.vibrate&&navigator.vibrate([70,50,70])}catch(e){}sfx('knock');
+    const w=[].concat(o.wrong||[]).filter(Boolean),r=[].concat(o.right||[]).filter(Boolean);
+    w.forEach(e=>e.classList.add('gkwrong'));r.forEach(e=>e.classList.add('gkright'));G.me('sad','idle');
+    const ov=document.createElement('div');ov.className='gkstop';ov.innerHTML=`<div class="hand">✋</div><b>Ruko!</b><p>${esc(T(msg))}</p><button class="btn big sun" id="gkgo">▶ Theek hai</button>`;G.ar.appendChild(ov);
+    let done=false;const fin=()=>{if(done)return;done=true;ov.remove();w.forEach(e=>e.classList.remove('gkwrong'));r.forEach(e=>e.classList.remove('gkright'));G.me('happy','idle');G.paused=false};
+    tapOn(ov.querySelector('#gkgo'),fin);
+    await G.say('Ruko! '+msg);if(!done)await new Promise(res=>{const t=setTimeout(res,1600);TIMERS.push(t);const chk=setInterval(()=>{if(done||!G.alive()){clearInterval(chk);res()}},100);TIMERS.push(chk)});
+    fin();
+  };
+  G.loop=(update)=>{let last=performance.now();const f=now=>{if(!G.alive())return;const dt=Math.min(.05,(now-last)/1000);last=now;if(!G.paused)update(dt);requestAnimationFrame(f)};requestAnimationFrame(f)};
+  G.finish=(msg,data={})=>{if(G.ended)return;G.ended=true;const s=gState(key);s.plays++;const stars=G.stops<=1?3:G.stops<=3?2:1;if(G.stops<=2&&s.lv<3){s.lv++;toast(`Agla level khul gaya: Level ${s.lv}!`)}s.best=Math.max(s.best,G.stars);Store.prog();logAct(key,stars,{...data,stops:G.stops,lv:s.lv});
+    setTimeout(()=>{if(current===key)celebrate(stars,msg,key)},700)};
+  return G;
+}
+const balloonSVG=c=>`<svg viewBox="0 0 100 150" aria-hidden="true"><path d="M50 108 q-6 18 4 40" stroke="#8D8D8D" stroke-width="2" fill="none"/><path d="M50 6C24 6 8 28 8 52c0 30 26 54 42 56c16-2 42-26 42-56C92 28 76 6 50 6z" fill="${c}"/><path d="M44 106l6 8 6-8z" fill="${c}"/><ellipse cx="34" cy="34" rx="9" ry="15" fill="#fff" opacity=".35" transform="rotate(-20 34 34)"/></svg>`;
+const fishSVG=c=>`<svg viewBox="0 0 120 70" aria-hidden="true"><path d="M10 35C30 5 75 5 92 35C75 65 30 65 10 35z" fill="${c}"/><path d="M90 35L116 12L110 35L116 58z" fill="${c}"/><path d="M45 14q10 -12 22 0" fill="${c}" opacity=".8"/><circle cx="30" cy="30" r="7" fill="#fff"/><circle cx="28" cy="30" r="3.5" fill="#1D1D1D"/><path d="M50 22q6 13 0 26M62 22q6 13 0 26" stroke="#fff" stroke-width="3" fill="none" opacity=".45"/></svg>`;
+function burstAt(G,x,y,color){for(let i=0;i<10;i++){const s=document.createElement('i');s.className='gkbit';s.style.left=x+'px';s.style.top=y+'px';s.style.background=color;const a=i/10*Math.PI*2;s.style.setProperty('--dx',Math.cos(a)*60+'px');s.style.setProperty('--dy',Math.sin(a)*60+'px');G.ar.appendChild(s);setTimeout(()=>s.remove(),600)}}
 
-/* 2. Machhli Pakdo — selective attention + shifting rule */
-SCREENS.fish=()=>intro('Machhli Pakdo','🐟','Jo rang bola jaaye, sirf wahi machhli pakdo! Rang badalta rahega, dhyaan se suno.',()=>{
-  const COL=[['laal','#E2453C'],['peeli','#E9B824'],['neeli','#3B7BE0'],['hari','#3BA65A']];
-  let tgt=pick(COL),ok=0,bad=0,round=0,left=50;
-  app().innerHTML=`${topBar('Machhli Pakdo')}<div class="hud"><span id="ft">Sirf <b>${tgt[0]}</b></span><span id="fl">50s</span></div><div class="arena sea" id="ar"></div><div class="feedback" id="ff"></div>`;
-  const ar=$('#ar');G_say('Sirf '+tgt[0]+' machhli pakdo!');
-  const spawn=()=>{const c=Math.random()<.45?tgt:pick(COL),f=document.createElement('button');f.className='fishy';f.innerHTML=`<svg viewBox="0 0 60 36" width="70" height="42"><path d="M4 18 Q20 0 40 10 L56 2 L52 18 L56 34 L40 26 Q20 36 4 18Z" fill="${c[1]}"/><circle cx="16" cy="15" r="3" fill="#fff"/><circle cx="16" cy="15" r="1.5" fill="#222"/></svg>`;
-    const y=10+Math.random()*(ar.clientHeight-60),rtl=Math.random()<.5,dur=3200+Math.random()*1800;f.style.top=y+'px';f.style.animation=`${rtl?'swimL':'swimR'} ${dur}ms linear forwards`;if(rtl)f.firstChild.style.transform='scaleX(-1)';
-    let d=false;f.onclick=()=>{if(d)return;d=true;if(c===tgt){ok++;cue('pop');$('#ff').textContent=pick(['Pakad li!','Shabaash!','Wah!'])}else{bad++;$('#ff').textContent=`Ye ${c[0]} hai! Sirf ${tgt[0]}.`}f.remove()};
-    ar.appendChild(f);TIMERS.push(setTimeout(()=>f.remove(),dur))};
-  TIMERS.push(setInterval(spawn,850));
-  TIMERS.push(setInterval(()=>{left--;$('#fl').textContent=left+'s';if(left%12===0&&left>0){round++;tgt=pick(COL.filter(c=>c!==tgt));$('#ft').innerHTML=`Ab sirf <b>${tgt[0]}</b>`;cue('school');G_say('Dhyaan se! Ab sirf '+tgt[0]+' machhli!')}
-    if(left<=0){stopTimers();const acc=ok+bad?Math.round(100*ok/(ok+bad)):0,st=ok>=15&&acc>=80?3:ok>=8?2:1;logAct('fish',st,{ok,bad,acc});celebrate(st,`${ok} machhliyan pakdi!`,'fish')}},1000));
-});
-
-/* 3. Yaad Karo — sequence memory */
-const PADS=[['🐶','Kutta'],['🐱','Billi'],['🐮','Gaay'],['🦁','Sher']];
-SCREENS.simon=()=>{
-  const S={seq:[0,1].map(()=>Math.floor(Math.random()*4)),pos:0,lives:2,busy:true,best:0};
-  app().innerHTML=`${topBar('Yaad Karo')}<div class="stage">${ME(96)}<div class="bubble"><span class="q" id="sq">Dhyaan se dekho aur suno…</span></div></div><div class="grid4">${PADS.map(([e,n],i)=>`<button class="pad" data-i="${i}" aria-label="${n}">${e}</button>`).join('')}</div><div class="feedback" id="sf"></div>`;
-  const play=async()=>{S.busy=true;S.pos=0;$('#sq').textContent='Dhyaan se dekho aur suno…';$('#sf').textContent='Lambai: '+S.seq.length;for(const i of S.seq){if(current!=='simon')return;const p=app().querySelector(`.pad[data-i="${i}"]`);p.classList.add('lit');G_say(PADS[i][1]);await sleep(800);p.classList.remove('lit');await sleep(300)}if(current!=='simon')return;S.busy=false;$('#sq').textContent='Ab tumhari baari! Waise hi dabao.'};
-  app().querySelectorAll('.pad').forEach(p=>p.onclick=async()=>{if(S.busy)return;const i=+p.dataset.i;p.classList.add('lit');setTimeout(()=>p.classList.remove('lit'),250);
-    if(i===S.seq[S.pos]){S.pos++;if(S.pos===S.seq.length){S.best=S.seq.length;cue('pop');$('#sf').textContent=pick(['Sahi! 🌟','Wah! Yaad rakha!']);S.busy=true;S.seq.push(Math.floor(Math.random()*4));await sleep(1100);play()}}
-    else{S.lives--;S.busy=true;if(S.lives<=0){const st=S.best>=5?3:S.best>=3?2:1;logAct('simon',st,{best:S.best});celebrate(st,`Tumne ${S.best} cheezein yaad rakhi!`,'simon')}else{$('#sf').textContent='Koi baat nahi, ek baar aur dekho!';await sleep(1200);play()}}});
-  TIMERS.push(setTimeout(play,700));
+/* 1. LAAL GUBBARE — stop yourself (inhibition) */
+SCREENS.gonogo=async()=>{
+  const G=gameKit('gonogo','🎈 Laal Gubbare','aarav','sky'),lv=gState('gonogo').lv,ar=G.ar,need=8+lv*2;
+  let popped=0,spawnT=.5,list=[],warnT=0,first=true;
+  ar.innerHTML='<div class="cloud c1"></div><div class="cloud c2"></div>';
+  await G.say('Sirf LAAL gubbare phodo. Neele, hare aur peele gubbare ko mat chhuna!');if(!G.alive())return;
+  const spawn=()=>{
+    const col=first?'laal':(Math.random()<.62?'laal':pick(['neela','hara','peela']));first=false;
+    const el=document.createElement('button');el.className='gkballoon';el.innerHTML=balloonSVG(BCOL[col]);el.setAttribute('aria-label',col+' gubbara');
+    const W=ar.clientWidth,b={el,col,x:20+Math.random()*Math.max(10,W-130),y:ar.clientHeight+10,ph:Math.random()*6,dead:false};
+    tapOn(el,()=>{if(G.paused||b.dead)return;
+      if(col==='laal'){b.dead=true;const p=rectIn(el,ar);burstAt(G,p.x,p.y,BCOL.laal);el.classList.add('popped');setTimeout(()=>el.remove(),250);popped++;G.progress(popped/need);G.good(null);if(popped>=need)G.finish(`Shabaash! ${need} laal gubbare phode!`,{popped})}
+      else{const reds=list.filter(x=>!x.dead&&x.col==='laal').map(x=>x.el);G.stop(`Ye ${col} gubbara hai. Sirf laal gubbara phodna hai.`,{wrong:el,right:reds}).then(()=>{b.dead=true;el.classList.add('fly');setTimeout(()=>el.remove(),600)})}});
+    ar.appendChild(el);list.push(b)};
+  G.loop(dt=>{
+    spawnT-=dt;warnT-=dt;const alive=list.filter(b=>!b.dead);
+    if(spawnT<=0&&alive.length<1+lv){spawn();spawnT=(3-lv*.3)/gSpeed()}
+    const v=(26+lv*9)*gSpeed();
+    alive.forEach(b=>{b.y-=v*dt;b.ph+=dt*1.5;b.el.style.transform=`translate(${b.x+Math.sin(b.ph)*10}px,${b.y}px)`;
+      if(b.y<-160){b.dead=true;b.el.remove();if(b.col==='laal'&&warnT<=0){warnT=6;G.fb('Oho, laal gubbara ud gaya!');say('Oho, laal gubbara ud gaya! Dhyaan se dekho.',NARR)}}});
+    list=list.filter(b=>!b.dead||b.el.isConnected);
+  });
 };
 
-/* 4. Jodi Milao — memory pairs */
-SCREENS.pairs=()=>{
-  const set=shuffle(['🚗','🐘','🍎','⚽','🚂','🦁','🌟','🎈','🦖','🍌']).slice(0,6);
-  const cards=shuffle([...set,...set]);let open=[],found=0,flips=0,lock=false;
-  app().innerHTML=`${topBar('Jodi Milao')}<p class="muted" style="text-align:center;font-weight:600">Do same dhoondo! Palat kar dekho.</p><div class="pairs">${cards.map((c,i)=>`<button class="card2" data-i="${i}"><span>${c}</span></button>`).join('')}</div><div class="feedback" id="pf"></div>`;
-  G_say('Do same tasveeren dhoondo!');
-  app().querySelectorAll('.card2').forEach(b=>b.onclick=()=>{if(lock||b.classList.contains('up'))return;b.classList.add('up');open.push(b);
-    if(open.length===2){flips++;lock=true;const [a,c]=open;
-      if(cards[a.dataset.i]===cards[c.dataset.i]){found++;cue('pop');$('#pf').textContent='Jodi mil gayi!';a.classList.add('ok');c.classList.add('ok');open=[];lock=false;
-        if(found===6){const st=flips<=10?3:flips<=15?2:1;logAct('pairs',st,{flips});TIMERS.push(setTimeout(()=>celebrate(st,`Saari jodiyan ${flips} baar mein!`,'pairs'),700))}}
-      else TIMERS.push(setTimeout(()=>{a.classList.remove('up');c.classList.remove('up');open=[];lock=false},900))}});
+/* 2. MACHHLI PAKDO — catch only the colour that is called (attention + switching) */
+SCREENS.fish=async()=>{
+  const G=gameKit('fish','🐟 Machhli Pakdo','priya','pond'),lv=gState('fish').lv,ar=G.ar,need=9+lv*2,cols=['laal','peela','neela','hara'].slice(0,2+Math.min(lv,2));
+  let caught=0,tgt=pick(cols),list=[],spawnT=0,sinceSwitch=0;G.tgt=()=>tgt;
+  ar.innerHTML='<div class="bucket" id="bkt">🪣<span id="bkn">0</span></div><div class="weed w1"></div><div class="weed w2"></div>';
+  const banner=async()=>{G.paused=true;const b=document.createElement('div');b.className='gkbanner';b.innerHTML=`Sirf <span style="color:${BCOL[tgt]}">${T(fem(tgt).toUpperCase())}</span> machhli!`;ar.appendChild(b);await G.say(`Ab sirf ${fem(tgt)} machhli pakdo!`);await sleep(500);b.remove();G.paused=false};
+  await banner();if(!G.alive())return;
+  const spawn=()=>{
+    const col=Math.random()<.5?tgt:pick(cols),dir=Math.random()<.5?1:-1,lanes=[.12,.34,.56],lane=pick(lanes);
+    const el=document.createElement('button');el.className='gkfish'+(dir<0?' flip':'');el.innerHTML=fishSVG(BCOL[col]);
+    const f={el,col,dir,x:dir>0?-130:ar.clientWidth+10,y:ar.clientHeight*lane,ph:Math.random()*6,dead:false};
+    tapOn(el,()=>{if(G.paused||f.dead)return;
+      if(f.col===tgt){f.dead=true;caught++;sinceSwitch++;const bk=$('#bkt'),p=rectIn(bk,ar);el.classList.add('catch');el.style.transform=`translate(${p.x-55}px,${p.y-40}px) scale(.3)`;setTimeout(()=>el.remove(),500);$('#bkn').textContent=caught;G.progress(caught/need);G.good(null,null);
+        if(caught>=need)return G.finish(`Wah! ${need} machhliyan pakdi!`,{caught});
+        if(sinceSwitch>=4){sinceSwitch=0;tgt=pick(cols.filter(c=>c!==tgt));list.forEach(x=>{if(!x.dead){x.dead=true;x.el.remove()}});setTimeout(()=>G.alive()&&banner(),600)}}
+      else{const right=list.filter(x=>!x.dead&&x.col===tgt).map(x=>x.el);G.stop(`Ye ${fem(f.col)} machhli hai. Hume sirf ${fem(tgt)} machhli pakadni hai.`,{wrong:el,right})}});
+    ar.appendChild(el);list.push(f)};
+  G.loop(dt=>{
+    spawnT-=dt;const alive=list.filter(f=>!f.dead);
+    if(spawnT<=0&&alive.length<2+lv){spawn();spawnT=(2.4-lv*.25)/gSpeed()}
+    const v=(38+lv*10)*gSpeed();
+    alive.forEach(f=>{f.x+=f.dir*v*dt;f.ph+=dt*2;f.el.style.transform=`translate(${f.x}px,${f.y+Math.sin(f.ph)*8}px)${f.dir<0?' scaleX(-1)':''}`;if(f.x<-160||f.x>ar.clientWidth+40){f.dead=true;f.el.remove()}});
+    list=list.filter(f=>!f.dead);
+  });
 };
 
-/* 5. Suno aur Karo — following spoken instructions (classroom readiness) */
-const PICS=[['🍎','apple'],['🚗','car'],['⚽','ball'],['🐶','kutta'],['🌞','suraj'],['🏠','ghar'],['🐟','machhli'],['✏️','pencil'],['🍌','kela'],['🚂','train'],['🌳','tree'],['🐱','billi'],['⭐','star'],['🎈','balloon'],['📚','book']];
-SCREENS.follow=()=>{const F={level:1,trial:0,ok:0,streak:0,maxL:1};
-  const next=()=>{if(F.trial>=8){const st=F.ok>=7?3:F.ok>=5?2:1;logAct('follow',st,{ok:F.ok,maxL:F.maxL});return celebrate(st,`8 mein se ${F.ok} sahi!`,'follow')}
-    const set=shuffle(PICS).slice(0,6),tg=shuffle(set).slice(0,F.level),w=tg.map(t=>t[1]);let pos=0,busy=false;
-    const text=F.level===1?`${w[0]} ko touch karo.`:F.level===2?`Pehle ${w[0]}, phir ${w[1]} touch karo.`:`Pehle ${w[0]}, phir ${w[1]}, phir ${w[2]}.`;
-    app().innerHTML=`${topBar('Suno aur Karo')}<div class="steps">${Array.from({length:8},(_,i)=>`<i class="${i<F.trial?'done':''}"></i>`).join('')}</div><div class="stage">${ME(96)}<div class="bubble"><span class="q">Dhyaan se suno!</span><button class="say" id="fr">🔊 Phir se suno</button></div></div><div class="grid6">${set.map(([e,n])=>`<button class="pic" data-n="${n}">${e}<small>${n}</small></button>`).join('')}</div><div class="feedback" id="ff"></div>`;
-    $('#fr').onclick=()=>G_say(text);TIMERS.push(setTimeout(()=>G_say(text),400));
-    app().querySelectorAll('.pic').forEach(b=>b.onclick=()=>{if(busy)return;if(b.dataset.n===tg[pos][1]){b.classList.add('ok');pos++;if(pos===tg.length){busy=true;F.ok++;F.streak++;F.trial++;if(F.streak>=2&&F.level<3){F.level++;F.streak=0;F.maxL=Math.max(F.maxL,F.level)}cue('pop');$('#ff').textContent='Shabaash! Sahi suna!';TIMERS.push(setTimeout(next,1200))}}
-      else{b.classList.add('no');busy=true;F.streak=0;F.trial++;if(F.level>1)F.level--;$('#ff').textContent='Suno, bola tha: '+text;G_say('Koi baat nahi. '+text);TIMERS.push(setTimeout(next,2600))}})};
-  next()};
+/* 3. SUNO AUR KARO — listen to the whole instruction, then act (classroom readiness) */
+const PICS5=[['🍎','seb'],['🚗','car'],['⚽','ball'],['🐶','kutta'],['🌞','suraj'],['🏠','ghar'],['🐟','machhli'],['✏️','pencil'],['🍌','kela'],['🚂','train'],['🌳','ped'],['🐱','billi'],['⭐','taara'],['🎈','gubbara'],['📚','kitaab']];
+SCREENS.follow=async()=>{
+  const G=gameKit('follow','👂 Suno aur Karo','priya','cards'),st=gState('follow');let level=st.lv,trial=0,ok=0,streak=0;const N=8;
+  await G.say('Pehle poora suno. Phir touch karo!');
+  while(G.alive()&&trial<N){
+    const set=shuffle(PICS5).slice(0,6),tg=shuffle(set).slice(0,level),w=tg.map(t=>t[1]);
+    const text=level===1?`${cap(w[0])} touch karo.`:level===2?`Pehle ${w[0]}, phir ${w[1]} touch karo.`:`Pehle ${w[0]}, phir ${w[1]}, phir ${w[2]}.`;
+    G.ar.innerHTML=`<div class="g6">${set.map(([e,n])=>`<button class="pic5" data-n="${n}"><span>${e}</span><small>${T(n)}</small></button>`).join('')}</div><div class="ears">👂 Dhyaan se suno…</div>`;
+    const btns=[...G.ar.querySelectorAll('.pic5')];btns.forEach(b=>b.disabled=true);
+    await G.say(text);if(!G.alive())return;
+    const e=G.ar.querySelector('.ears');if(e)e.textContent='👆 Ab touch karo';btns.forEach(b=>b.disabled=false);
+    let pos=0,wrongHere=false;G.want=()=>tg[pos]&&tg[pos][1];
+    await new Promise(res=>{
+      const hintT=setTimeout(()=>{const b=btns.find(x=>x.dataset.n===tg[pos][1]);b&&b.classList.add('gkright')},9000/gSpeed());TIMERS.push(hintT);
+      btns.forEach(b=>tapOn(b,async()=>{if(G.paused||b.classList.contains('ok'))return;
+        if(b.dataset.n===tg[pos][1]){b.classList.add('ok');b.classList.remove('gkright');sfx('pop');buzz(15);pos++;if(pos===tg.length){clearTimeout(hintT);res()}}
+        else{wrongHere=true;const right=btns.find(x=>x.dataset.n===tg[pos][1]);await G.stop(`Ye ${b.dataset.n} hai. Suno: ${text}`,{wrong:b,right})}}))});
+    if(!G.alive())return;
+    trial++;G.progress(trial/N);
+    if(!wrongHere){ok++;streak++;G.good(G.ar.querySelector('.pic5.ok'),pick(['Bilkul sahi suna!','Wah, poora suna!']));if(streak>=2&&level<3){level++;streak=0}}else{streak=0;if(level>1)level--}
+    await sleep(1100);
+  }
+  if(G.alive())G.finish(`${N} mein se ${ok} bilkul sahi suna!`,{ok});
+};
 
-/* 6. Kaun Alag Hai — categories & attention */
-const CATS={fal:['🍎','🍌','🍇','🍊','🍉','🥭'],janwar:['🐶','🐱','🐮','🦁','🐘','🐒'],gaadi:['🚗','🚌','🚂','✈️','🛺','🚲'],kapde:['👕','👖','🧢','🧦','👟','🧥'],sabzi:['🥕','🥔','🍅','🧅','🍆','🥦']};
-SCREENS.odd=()=>{let r=0,ok=0;const round=()=>{if(r>=8){const st=ok>=7?3:ok>=5?2:1;logAct('odd',st,{ok});return celebrate(st,`8 mein se ${ok} sahi!`,'odd')}
-  const ks=shuffle(Object.keys(CATS)),a=ks[0],b=ks[1],items=shuffle([...shuffle(CATS[a]).slice(0,3),pick(CATS[b])]),odd=items.find(x=>CATS[b].includes(x));
-  app().innerHTML=`${topBar('Kaun Alag Hai?')}<div class="steps">${Array.from({length:8},(_,i)=>`<i class="${i<r?'done':''}"></i>`).join('')}</div><div class="stage">${ME(96)}<div class="bubble"><span class="q">In mein se kaun alag hai?</span></div></div><div class="grid4">${items.map(x=>`<button class="pad" data-x="${x}">${x}</button>`).join('')}</div><div class="feedback" id="of"></div>`;
-  G_say('In mein se kaun alag hai?');
-  app().querySelectorAll('.pad').forEach(p=>p.onclick=()=>{app().querySelectorAll('.pad').forEach(x=>x.disabled=true);r++;
-    if(p.dataset.x===odd){ok++;p.classList.add('lit');cue('pop');const m=`Sahi! Baaki sab ${a} hain.`;$('#of').textContent=m;G_say(m)}
-    else{const m=`Ye wala alag tha: ${odd}. Baaki sab ${a} hain.`;$('#of').textContent=m;G_say(m)}TIMERS.push(setTimeout(round,2300))})};round()};
+/* 4. YAAD KARO — remember the order (working memory) */
+const PADS5=[['🐶','Kutta','#FFCC80'],['🐱','Billi','#CE93D8'],['🐮','Gaay','#A5D6A7'],['🦁','Sher','#FFE082']];
+SCREENS.simon=async()=>{
+  const G=gameKit('simon','🧠 Yaad Karo','aarav','pads'),st=gState('simon');
+  G.ar.innerHTML=`<div class="g4">${PADS5.map(([e,n,c],i)=>`<button class="pad5" data-i="${i}" style="--pc:${c}"><span>${e}</span><small>${T(n)}</small></button>`).join('')}</div>`;
+  const pads=[...G.ar.querySelectorAll('.pad5')];let seq=[Math.floor(Math.random()*4)],rounds=0,best=0;const goal=3+st.lv;
+  await G.say('Dhyaan se dekho aur suno. Phir waise hi dabao!');
+  const show=async()=>{accept=false;G.fb('👀 Dekho…');await sleep(500);for(const i of seq){if(!G.alive())return;pads[i].classList.add('lit');say(PADS5[i][1],NARR);sfx('ting');await sleep(950/gSpeed());pads[i].classList.remove('lit');await sleep(420/gSpeed())}G.fb('👆 Ab tumhari baari');accept=true};
+  let pos=0,accept=false,resolver=null;G.want=()=>accept?seq[pos]:-1;
+  pads.forEach(p=>tapOn(p,async()=>{if(G.paused||!accept)return;const i=+p.dataset.i;p.classList.add('lit');setTimeout(()=>p.classList.remove('lit'),220);
+    if(i===seq[pos]){sfx('pop');buzz(12);pos++;if(pos===seq.length){accept=false;resolver&&resolver(true)}}
+    else{accept=false;await G.stop(`Ye ${PADS5[i][1]} hai. Wahan ${PADS5[seq[pos]][1]} tha. Chalo phir se dekhte hain.`,{wrong:p,right:pads[seq[pos]]});resolver&&resolver(false)}}));
+  while(G.alive()&&rounds<goal){
+    pos=0;await show();if(!G.alive())return;
+    const okRound=await new Promise(res=>{resolver=res});
+    if(!G.alive())return;
+    if(okRound){rounds++;best=Math.max(best,seq.length);G.progress(rounds/goal);G.good(pads[seq[seq.length-1]],`Sahi! ${seq.length} yaad rakhe!`);seq.push(Math.floor(Math.random()*4));await sleep(900)}
+  }
+  if(G.alive())G.finish(`Tumne ${best} cheezein order mein yaad rakhi!`,{best});
+};
 
-/* 8. Gino aur Bolo — count and say the number */
-const NUMW=[[],['ek','one','1'],['do','two','2'],['teen','three','3'],['char','chaar','four','4'],['paanch','panch','five','5'],['chhe','che','six','6'],['saat','sat','seven','7'],['aath','ath','eight','8'],['nau','no','nine','9'],['das','dus','ten','10']];
-SCREENS.count=()=>{let r=0,ok=0;const round=()=>{if(r>=6){const st=ok>=5?3:ok>=3?2:1;logAct('count',st,{ok});return celebrate(st,`6 mein se ${ok} sahi gine!`,'count')}
-  const n=2+Math.floor(Math.random()*(r<3?4:8)),e=pick(['🍎','⭐','🐤','🎈','🚗','🍪']);
-  const opts=shuffle([n,...shuffle([1,2,3,4,5,6,7,8,9,10].filter(x=>x!==n)).slice(0,2)]);
-  app().innerHTML=`${topBar('Gino aur Bolo')}<div class="steps">${Array.from({length:6},(_,i)=>`<i class="${i<r?'done':''}"></i>`).join('')}</div><div class="countbox">${Array.from({length:n},()=>`<span>${e}</span>`).join('')}</div><h2 style="text-align:center">Kitne hain? Gin kar dabao!</h2><div class="choices">${opts.map(o=>`<button class="choice" data-o="${o}"><span class="e" style="font-family:var(--display)">${o}</span></button>`).join('')}</div>${micOK()?`<div class="row" style="justify-content:center"><button class="btn sun" id="mic">🎤 Bol kar batao</button></div>`:''}<div class="feedback" id="cf"></div>`;
-  G_say('Kitne hain? Gin kar batao!');
-  const answer=v=>{app().querySelectorAll('.choice').forEach(x=>x.disabled=true);r++;if(v===n){ok++;cue('yay');$('#cf').textContent=`Sahi! ${n}!`;G_say(`Sahi! Ye ${NUMW[n][0]} hain!`)}else{$('#cf').textContent=`Ye ${n} hain. Chalo saath ginte hain!`;G_say(`Chalo saath ginte hain: `+Array.from({length:n},(_,i)=>NUMW[i+1][0]).join(', '))}TIMERS.push(setTimeout(round,v===n?1800:3500))};
-  app().querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(+b.dataset.o));
-  const m=$('#mic');if(m)m.onclick=()=>{m.textContent='🎤 Sun raha hoon…';startRec(t=>{$('#cf').textContent=t},f=>{if(!f){m.textContent='🎤 Bol kar batao';return}const v=NUMW.findIndex((ws,i)=>i&&anyKey(f,ws));if(v>0)answer(v);else{$('#cf').textContent=`"${f.text}"? Phir se bolo.`;m.textContent='🎤 Bol kar batao'}})}};
-  round()};
+/* 5. JODI MILAO — find matching pairs (visual memory) */
+SCREENS.pairs=async()=>{
+  const G=gameKit('pairs','🃏 Jodi Milao','aarav','cards'),lv=gState('pairs').lv,np=3+lv;
+  const set=shuffle(PICS5).slice(0,np),cards=shuffle([...set,...set]);let open=[],found=0,flips=0,lock=false;
+  G.ar.innerHTML=`<div class="gpairs" style="--cols:${np<=4?4:4}">${cards.map((c,i)=>`<button class="card5" data-i="${i}"><span class="back">?</span><span class="front">${c[0]}</span></button>`).join('')}</div>`;
+  const els=[...G.ar.querySelectorAll('.card5')];
+  await G.say('Card palto. Do same tasveer dhoondo!');
+  els.forEach(el=>tapOn(el,async()=>{
+    if(G.paused||el.classList.contains('up'))return;
+    if(lock){await G.stop('Pehle in do card ko dekho. Phir agla palatna.',{right:open});return}
+    el.classList.add('up');sfx('ting');open.push(el);say(cards[+el.dataset.i][1],NARR);
+    if(open.length===2){flips++;lock=true;const [a,b]=open,ca=cards[+a.dataset.i],cb=cards[+b.dataset.i];
+      await sleep(800);if(!G.alive())return;
+      if(ca[1]===cb[1]){a.classList.add('ok');b.classList.add('ok');found++;G.progress(found/np);G.good(b,`Do ${ca[1]}! Jodi mil gayi!`);open=[];lock=false;if(found===np)G.finish(`Saari jodiyan mil gayi, ${flips} baar mein!`,{flips})}
+      else{G.fb(`${cap(ca[1])} aur ${cb[1]}. Same nahi. Yaad rakho!`);await say(`${ca[1]} aur ${cb[1]}. Same nahi. Yaad rakho!`,NARR);await sleep(500);a.classList.remove('up');b.classList.remove('up');open=[];lock=false}}
+  }));
+};
+
+/* 6. KAUN ALAG HAI — which one does not belong (categories) */
+const CATS5={phal:['🍎','🍌','🍇','🍊','🍉','🥭'],janwar:['🐶','🐱','🐮','🦁','🐘','🐒'],gaadi:['🚗','🚌','🚂','✈️','🛺','🚲'],kapde:['👕','👖','🧢','🧦','👟','🧥'],sabzi:['🥕','🥔','🍅','🧅','🍆','🥦']};
+const CATSG={phal:'phal',janwar:'janwar',gaadi:'gaadi',kapde:'kapde',sabzi:'sabzi'};
+SCREENS.odd=async()=>{
+  const G=gameKit('odd','🔍 Kaun Alag?','priya','cards');let r=0,ok=0;const N=8;
+  await G.say('Ek cheez baaki sab se alag hai. Use dhoondo!');
+  while(G.alive()&&r<N){
+    const ks=shuffle(Object.keys(CATS5)),a=ks[0],b=ks[1],items=shuffle([...shuffle(CATS5[a]).slice(0,3),pick(CATS5[b])]),odd=items.find(x=>CATS5[b].includes(x));
+    G.ar.innerHTML=`<div class="g4">${items.map(x=>`<button class="pad5 big" data-x="${x}"><span>${x}</span></button>`).join('')}</div>`;
+    const els=[...G.ar.querySelectorAll('.pad5')];
+    await G.say('In mein se kaun alag hai?');if(!G.alive())return;
+    let wrong=false;G.want=odd;
+    await new Promise(res=>els.forEach(el=>tapOn(el,async()=>{if(G.paused)return;
+      if(el.dataset.x===odd){el.classList.add('ok');G.good(el,`Haan! Ye ${CATSG[b]} hai, baaki sab ${CATSG[a]} hain.`);res()}
+      else{wrong=true;await G.stop(`Ye ${CATSG[a]} hai, aur baaki bhi ${CATSG[a]} hain. Alag wala dhoondo!`,{wrong:el,right:els.find(x=>x.dataset.x===odd)})}})));
+    if(!G.alive())return;r++;if(!wrong)ok++;G.progress(r/N);await sleep(1300);
+  }
+  if(G.alive())G.finish(`${N} mein se ${ok} pehli baar mein sahi!`,{ok});
+};
+
+/* 7. GINO — touch each one while counting, then choose the number (1-to-1 counting) */
+const NUMS5=['','ek','do','teen','chaar','paanch','chhe','saat','aath'];
+SCREENS.count=async()=>{
+  const G=gameKit('count','🔢 Gino','priya','cards'),lv=gState('count').lv;let r=0,ok=0;const N=6;
+  await G.say('Har ek ko touch karke gino!');
+  while(G.alive()&&r<N){
+    const n=2+Math.floor(Math.random()*(lv+2)),e=pick(['🍎','⭐','🐤','🎈','🚗','🍪','🐟']);
+    G.ar.innerHTML=`<div class="cnt">${Array.from({length:n},(_,i)=>`<button class="cobj" data-i="${i}" style="animation-delay:${i*.35/gSpeed()}s">${e}<b></b></button>`).join('')}</div><div class="nums" hidden></div>`;
+    const objs=[...G.ar.querySelectorAll('.cobj')];let c=0,wrong=false;G.want=n;
+    await sleep(n*350/gSpeed()+300);if(!G.alive())return;G.fb('👆 Ek-ek karke touch karo');
+    await new Promise(res=>objs.forEach(o=>tapOn(o,async()=>{if(G.paused)return;
+      if(o.classList.contains('done')){wrong=true;await G.stop('Isko gin liya. Jo bacha hai, use touch karo.',{wrong:o,right:objs.filter(x=>!x.classList.contains('done'))});return}
+      c++;o.classList.add('done');o.querySelector('b').textContent=c;sfx('pop');buzz(12);say(NUMS5[c],NARR);if(c===n)res()})));
+    if(!G.alive())return;
+    await sleep(500);G.fb('🔢 Kitne hain? Number dabao');await G.say('Kitne hain?');
+    const opts=shuffle([n,...shuffle([1,2,3,4,5,6,7,8].filter(x=>x!==n&&Math.abs(x-n)<=3)).slice(0,2)]);
+    const box=G.ar.querySelector('.nums');box.hidden=false;box.innerHTML=opts.map(o=>`<button class="numb" data-o="${o}">${o}</button>`).join('');
+    const nb=[...box.querySelectorAll('.numb')];
+    await new Promise(res=>nb.forEach(b=>tapOn(b,async()=>{if(G.paused)return;
+      if(+b.dataset.o===n){b.classList.add('ok');G.good(b,`Haan! ${NUMS5[n]}! Aakhri number hi jawab hai.`);res()}
+      else{wrong=true;await G.stop(`Humne ${NUMS5[n]} tak gina tha. Aakhri number hi jawab hai.`,{wrong:b,right:nb.find(x=>+x.dataset.o===n)})}})));
+    if(!G.alive())return;r++;if(!wrong)ok++;G.progress(r/N);await sleep(1300);
+  }
+  if(G.alive())G.finish(`${N} mein se ${ok} bilkul sahi gine!`,{ok});
+};
 
 /* =====================================================================
    JAADUI KAMRA — 3D room with an adaptive AI coach
@@ -1885,6 +2070,7 @@ function pSettings(){
    <p class="muted small" id="vl"></p>
    <label class="f">Bolne ki speed<select id="sp"><option value="0.8">Dheere</option><option value="0.9">Normal-dheere</option><option value="1">Normal</option></select></label>
    <label class="f">Screen par likhawat<select id="ss2"><option value="roman">Roman (Namaste)</option><option value="deva">Hindi (नमस्ते)</option></select></label>
+   <label class="f">Games ki raftaar<select id="gsp"><option value="slow">Dheere (shuruaat ke liye)</option><option value="normal">Normal</option></select></label>
    <label class="f">Roz ki screen limit (min)<select id="sl"><option>15</option><option>20</option><option>25</option><option>30</option></select></label>
    <label class="f">Report card ke 3 goals<input id="t0" value="${esc(PROFILE.targets[0])}"><input id="t1" value="${esc(PROFILE.targets[1])}"><input id="t2" value="${esc(PROFILE.targets[2])}"></label>
    ${VOICE?`<label class="f">🎤 Shivansh bol kar jawab de<select id="vm"><option value="1">Haan – app sunega</option><option value="0">Nahi – sirf touch</option></select></label>
@@ -1893,7 +2079,7 @@ function pSettings(){
    <label class="f">Claude API key (optional, AI jawab ke liye)<input id="sk" type="password" value="${esc(PROFILE.apiKey||'')}" placeholder="sk-ant-..."><span class="muted small">Isse characters Shivansh ki har alag baat par khud naya jawab sochte hain, aur naye scene bante hain. Kharch aapke Anthropic account se. Key sirf isi phone mein rehti hai.</span></label>`:''}
    <button class="btn" id="ss">Save karein</button></div>
   ${VOICE?'':`<div class="card"><h3>Mummy ke phone par</h3><p class="muted small">Upar Share menu se Mummy ko access dein. Unke claude.ai account se khulne par same progress dikhega.</p></div>`}`;
-  $('#sv').value=PROFILE.voice==='en-IN'?'en-IN':'auto';$('#sp').value=String(PROFILE.rate);$('#sl').value=String(PROFILE.limitMin);$('#ak').value=PROFILE.look.skin||'#E0AC82';$('#ah').value=PROFILE.look.hair||'short';$('#ss2').value=PROFILE.script||'roman';
+  $('#sv').value=PROFILE.voice==='en-IN'?'en-IN':'auto';$('#sp').value=String(PROFILE.rate);$('#sl').value=String(PROFILE.limitMin);$('#ak').value=PROFILE.look.skin||'#E0AC82';$('#ah').value=PROFILE.look.hair||'short';$('#ss2').value=PROFILE.script||'roman';$('#gsp').value=PROFILE.gameSpeed||'slow';
   const showV=()=>{loadVoices();const h=pickVoice('hi','f');$('#vl').textContent=h?`Hindi awaaz mili: ${h.name} ✓`:'Is phone mein Hindi awaaz nahi mili. Android: Settings → Text-to-speech → Google → Hindi (India) download karein.'};showV();setTimeout(showV,900);
   const tmp=f=>{const v=PROFILE.voice,r=PROFILE.rate;PROFILE.voice=$('#sv').value;PROFILE.rate=+$('#sp').value;f();PROFILE.voice=v;PROFILE.rate=r};
   $('#vt1').onclick=()=>tmp(()=>say('Aao aao baccha! Kaunsi sabzi chahiye?',{g:'f',pitch:1}));
@@ -1901,7 +2087,7 @@ function pSettings(){
   $('#vt3').onclick=()=>tmp(()=>say('Kaka, mujhe ek chocolate chahiye, please.',KIDV()));
   if(VOICE){$('#vm').value=PROFILE.mic===false?'0':'1';$('#vr').value=PROFILE.recLang||'hi-IN';
     $('#mt').onclick=()=>{if(!SR){$('#mtr').textContent='Is browser mein mic se sunna nahi chalta. Android par Google Chrome use karein.';return}PROFILE.recLang=$('#vr').value;PROFILE.mic=true;$('#mtr').textContent='🎤 Kuch boliye… (jaise: Kaka, mujhe chocolate chahiye)';startRec(t=>{$('#mtr').textContent='Sun raha hoon: '+t},f=>{$('#mtr').textContent=f?'Suna: "'+f.text+'" ✓':'Kuch sunai nahi diya. Chrome mein mic ki permission check karein.'})}}
-  $('#ss').onclick=async()=>{if(VOICE){PROFILE.mic=$('#vm').value==='1';PROFILE.recLang=$('#vr').value;PROFILE.apiKey=$('#sk').value.trim();SAMPLE=apiSample()}PROFILE={...PROFILE,name:$('#sn').value.trim()||'Shivansh',nameDeva:$('#snd').value.trim(),interests:$('#si').value.split(',').map(s=>s.trim()).filter(Boolean),voice:$('#sv').value,rate:+$('#sp').value,script:$('#ss2').value,limitMin:+$('#sl').value,targets:[$('#t0').value,$('#t1').value,$('#t2').value].map(s=>s.trim()||'Goal'),look:{...PROFILE.look,skin:$('#ak').value,hair:$('#ah').value,main:$('#ac').value}};await Store.profile();toast('Save ho gaya')};
+  $('#ss').onclick=async()=>{if(VOICE){PROFILE.mic=$('#vm').value==='1';PROFILE.recLang=$('#vr').value;PROFILE.apiKey=$('#sk').value.trim();SAMPLE=apiSample()}PROFILE={...PROFILE,name:$('#sn').value.trim()||'Shivansh',nameDeva:$('#snd').value.trim(),interests:$('#si').value.split(',').map(s=>s.trim()).filter(Boolean),voice:$('#sv').value,rate:+$('#sp').value,script:$('#ss2').value,gameSpeed:$('#gsp').value,limitMin:+$('#sl').value,targets:[$('#t0').value,$('#t1').value,$('#t2').value].map(s=>s.trim()||'Goal'),look:{...PROFILE.look,skin:$('#ak').value,hair:$('#ah').value,main:$('#ac').value}};await Store.profile();toast('Save ho gaya')};
 }
 
 /* ================= BOOT ================= */
