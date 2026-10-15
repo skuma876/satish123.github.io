@@ -1372,7 +1372,7 @@ async function runChat(id){
    Every wrong tap pauses the game, shows what was wrong and what was right,
    explains in a calm voice, then the game continues from the same place.
    ===================================================================== */
-const gSpeed=()=>PROFILE.gameSpeed==='normal'?1:.7;
+const gSpeed=()=>PROFILE.gameSpeed==='normal'?1.2:.9;
 const gState=k=>{PROG.games=PROG.games||{};return PROG.games[k]||(PROG.games[k]={lv:1,best:0,plays:0})};
 const tapOn=(el,fn)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();fn(e)},{passive:false})};
 const rectIn=(el,host)=>{const a=el.getBoundingClientRect(),b=host.getBoundingClientRect();return {x:a.left-b.left+a.width/2,y:a.top-b.top+a.height/2}};
@@ -1434,9 +1434,9 @@ SCREENS.gonogo=async()=>{
     ar.appendChild(el);list.push(b)};
   G.loop(dt=>{
     spawnT-=dt;warnT-=dt;const alive=list.filter(b=>!b.dead);
-    if(spawnT<=0&&alive.length<1+lv){spawn();spawnT=(3-lv*.3)/gSpeed()}
-    const v=(26+lv*9)*gSpeed();
-    alive.forEach(b=>{b.y-=v*dt;b.ph+=dt*1.5;b.el.style.transform=`translate(${b.x+Math.sin(b.ph)*10}px,${b.y}px)`;
+    if(spawnT<=0&&alive.length<2+lv){spawn();spawnT=(1.7-lv*.2)/gSpeed()}
+    const v=(70+lv*18)*gSpeed();
+    alive.forEach(b=>{b.y-=v*dt;b.ph+=dt*2.2;b.el.style.transform=`translate(${b.x+Math.sin(b.ph)*10}px,${b.y}px)`;
       if(b.y<-160){b.dead=true;b.el.remove();if(b.col==='laal'&&warnT<=0){warnT=6;G.fb('Oho, laal gubbara ud gaya!');say('Oho, laal gubbara ud gaya! Dhyaan se dekho.',NARR)}}});
     list=list.filter(b=>!b.dead||b.el.isConnected);
   });
@@ -1461,9 +1461,9 @@ SCREENS.fish=async()=>{
     ar.appendChild(el);list.push(f)};
   G.loop(dt=>{
     spawnT-=dt;const alive=list.filter(f=>!f.dead);
-    if(spawnT<=0&&alive.length<2+lv){spawn();spawnT=(2.4-lv*.25)/gSpeed()}
-    const v=(38+lv*10)*gSpeed();
-    alive.forEach(f=>{f.x+=f.dir*v*dt;f.ph+=dt*2;f.el.style.transform=`translate(${f.x}px,${f.y+Math.sin(f.ph)*8}px)${f.dir<0?' scaleX(-1)':''}`;if(f.x<-160||f.x>ar.clientWidth+40){f.dead=true;f.el.remove()}});
+    if(spawnT<=0&&alive.length<3+lv){spawn();spawnT=(1.4-lv*.15)/gSpeed()}
+    const v=(85+lv*20)*gSpeed();
+    alive.forEach(f=>{f.x+=f.dir*v*dt;f.ph+=dt*3;f.el.style.transform=`translate(${f.x}px,${f.y+Math.sin(f.ph)*8}px)${f.dir<0?' scaleX(-1)':''}`;if(f.x<-160||f.x>ar.clientWidth+40){f.dead=true;f.el.remove()}});
     list=list.filter(f=>!f.dead);
   });
 };
@@ -1501,7 +1501,7 @@ SCREENS.simon=async()=>{
   G.ar.innerHTML=`<div class="g4">${PADS5.map(([e,n,c],i)=>`<button class="pad5" data-i="${i}" style="--pc:${c}"><span>${e}</span><small>${T(n)}</small></button>`).join('')}</div>`;
   const pads=[...G.ar.querySelectorAll('.pad5')];let seq=[Math.floor(Math.random()*4)],rounds=0,best=0;const goal=3+st.lv;
   await G.say('Dhyaan se dekho aur suno. Phir waise hi dabao!');
-  const show=async()=>{accept=false;G.fb('👀 Dekho…');await sleep(500);for(const i of seq){if(!G.alive())return;pads[i].classList.add('lit');say(PADS5[i][1],NARR);sfx('ting');await sleep(950/gSpeed());pads[i].classList.remove('lit');await sleep(420/gSpeed())}G.fb('👆 Ab tumhari baari');accept=true};
+  const show=async()=>{accept=false;G.fb('👀 Dekho…');await sleep(500);for(const i of seq){if(!G.alive())return;pads[i].classList.add('lit');say(PADS5[i][1],NARR);sfx('ting');await sleep(800/gSpeed());pads[i].classList.remove('lit');await sleep(320/gSpeed())}G.fb('👆 Ab tumhari baari');accept=true};
   let pos=0,accept=false,resolver=null;G.want=()=>accept?seq[pos]:-1;
   pads.forEach(p=>tapOn(p,async()=>{if(G.paused||!accept)return;const i=+p.dataset.i;p.classList.add('lit');setTimeout(()=>p.classList.remove('lit'),220);
     if(i===seq[pos]){sfx('pop');buzz(12);pos++;if(pos===seq.length){accept=false;resolver&&resolver(true)}}
