@@ -488,6 +488,19 @@ body.listening .bub.kb{box-shadow:0 0 0 3px #DD6A50}
 .numb{width:90px;height:90px;border-radius:24px;font-family:var(--display);font-size:2.6rem;font-weight:800;background:var(--sun-soft);border:3px solid var(--sun);box-shadow:0 5px 0 #D9902C}
 .numb.ok{background:var(--teal-soft);border-color:var(--good)}
 
+/* ---- voice-only talk zone ---- */
+.talkzone{display:flex;align-items:center;gap:14px;background:var(--surface);border:4px solid var(--line);border-radius:28px;padding:14px 16px;min-height:96px;transition:border-color .2s,background .2s}
+.talkzone .ear{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2.4rem;background:var(--sunk);flex:0 0 auto}
+.talkzone .tz{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.talkzone b{font-family:var(--display);font-size:1.45rem;line-height:1.15}
+.talkzone #heard{font-size:1.05rem;color:var(--muted);overflow-wrap:anywhere}
+.talkzone.turn{border-color:var(--sun);background:var(--sun-soft)}
+.talkzone.on{border-color:var(--coral);background:var(--coral-soft)}
+.talkzone.on .ear{background:var(--coral);animation:pulse .9s ease-in-out infinite;box-shadow:0 0 0 10px rgba(221,106,80,.25)}
+.parentrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;font-size:.8rem;color:var(--muted);margin-top:4px}
+.pbtn{border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-weight:700;font-size:.85rem}
+.counter .obj:disabled{opacity:1;cursor:default}
+
 </style>
 </head><body><div class="wrap" id="app"></div>
 <script>
@@ -963,7 +976,7 @@ function stageHTML(){
     <div class="actor ${C.kid?'kid':''}" data-cid="${SC.charId}">${charSVG(C,SC.emo,SC.gesture)}<span class="tag">${esc(C.n)}</span></div></div>
     ${SC.fly?`<span class="flyer ${SC.fly.dir}">${SC.fly.e}</span>`:''}${SC.burst?`<span class="burst">⭐</span>`:''}</div>`;
 }
-function trayHTML(){return listenHTML()+trayHTML0()}
+function trayHTML(){return micOK()?voiceTray():listenHTML()+trayHTML0()}
 function trayHTML0(){
   const watch=SC.level===1;
   if(SC.phase==='pick'&&SC.opts)return `<p class="ask">${watch?'👀 Dekho, Shivansh kya chunta hai…':micOK()?'🗣️ Bolo, ya card dabao':`👆 ${esc(kidName())} kya bolega?`}</p><div class="cards">${SC.opts.map((o,i)=>`<button class="acard${o.gone?' gone':''}${SC.hint&&o[2]&&!o.gone?' glow':''}" data-ai="${i}" ${o.gone||watch?'disabled':''}><span>${o[0]}</span>${esc(T(fillN(o[1])))}</button>`).join('')}</div>`;
@@ -990,6 +1003,7 @@ function bindTray(){
   if(q('#peek'))q('#peek').onclick=()=>{SC.showModel=true;SC.peeked=true;renderScene();kidSays(SC.id,SC.model,true)};
   if(q('#mine'))q('#mine').onclick=()=>go('scene',SC.k,2,SC.steps);
   if(q('#mic'))q('#mic').onclick=()=>listenNow(SC.id);
+  const fire=t=>()=>{if(SC.resolve)SC.resolve({type:t})};if(q('#vhelp'))q('#vhelp').onclick=fire('help');if(q('#vagain'))q('#vagain').onclick=fire('again');if(q('#vskip'))q('#vskip').onclick=fire('skip');
 }
 function refreshStage(){if(current==='scene'){const s=app().querySelector('.scene');if(s)s.outerHTML=stageHTML()}else if(current==='chat')renderChat()}
 function hl(t,w){const e=esc(t);if(!w)return e;const i=e.toLowerCase().indexOf(esc(w).toLowerCase());return i<0?e:e.slice(0,i)+'<mark>'+e.slice(i,i+esc(w).length)+'</mark>'+e.slice(i+esc(w).length)}
@@ -1197,6 +1211,35 @@ function celebrate(stars,msg,again){
   cue('yay');say(msg+' '+stars+' star mile!',NARR);
 }
 
+/* ===== VOICE-ONLY conversation: no cards to read; characters act on what he says ===== */
+const VMODE=()=>micOK();
+function voiceTray(){
+  if(SC.phase==='watchdone')return trayHTML0();
+  const watch=SC.level===1,turn=['pick','choose','repeat'].includes(SC.phase)&&!watch;
+  const head=watch?'👀 Dekho aur suno':SC.listening?'Bolo… main sun raha hoon':turn?'Tumhari baari! Bolo 🗣️':'Suno… 👂';
+  let h=`<div class="talkzone ${SC.listening?'on':''} ${turn?'turn':''}"><div class="ear">${SC.listening?'🎤':watch?'👀':turn?'🗣️':'👂'}</div><div class="tz"><b>${head}</b><span id="heard">${SC.heard?esc(translit(SC.heard)):''}</span></div></div>`;
+  if(SC.phase==='choose'&&SC.objs)h+=`<div class="counter">${SC.objs.map((o,i)=>`<button class="obj${SC.hintObj===i?' glow':''}" data-oi="${i}" ${SC.voiceTouch?'':'disabled'} aria-label="${esc(o[1])}"><span>${o[0]}</span></button>`).join('')}</div>`;
+  if(turn)h+=`<div class="parentrow"><span>Mummy/Papa:</span><button class="pbtn" id="vhelp">💡 Madad</button><button class="pbtn" id="vagain">🔊 Phir se</button>${SC.phase==='repeat'?'<button class="pbtn" id="rd">✓ Bola</button>':''}<button class="pbtn" id="vskip">⏭ Aage</button>${SC.listening?'':'<button class="pbtn" id="mic">🎤 Suno</button>'}</div>`;
+  return h;
+}
+const PLACE_OBJS=k=>[].concat(...((PLACE_DATA[k]||{}).steps||[]).filter(s=>s.objs).map(s=>s.objs));
+const INTEREST=['dinosaur','train','cartoon','cricket','rocket','aeroplane','superhero','spiderman','bheem','motu','peppa','doggy','haathi','sher','titli','tractor','bus','truck'];
+const ucf=t=>t?t[0].toUpperCase()+t.slice(1):t;
+/* he said something that is not the expected answer: the character still acts on it */
+async function intentReact(id,inp){
+  const h={text:inp.text,alts:inp.alts||[inp.text]};
+  const o=PLACE_OBJS(SC.k).find(x=>anyKey(h,x.slice(1)));
+  if(o){await charSays(id,`${ucf(o[1])}? Haan, ye lo!`,'give','happy');await fly(id,o[0],'tokid');return 'obj'}
+  if(anyKey(h,['namaste','hello','hi','good morning','pranam','namaskar'])){await charSays(id,'Namaste namaste! Kitne pyaare ho.','wave','happy');return 'greet'}
+  if(anyKey(h,['thank','thanks','shukriya'])){await charSays(id,'Welcome beta!','clap','happy');return 'thanks'}
+  if(anyKey(h,['bye','tata'])){await charSays(id,'Arre, abhi mat jao! Ek baat aur.','wave','surprised');return 'bye'}
+  const it=INTEREST.concat(PROFILE.interests||[]).find(w=>anyKey(h,[w]));
+  if(it){await charSays(id,`${ucf(it)}? Wah! Mujhe bhi ${it} pasand hai!`,'clap','happy');return 'interest'}
+  if(anyKey(h,QWORDS)){await charSays(id,'Accha sawaal! Main baad mein bataunga.','think','happy');return 'q'}
+  if(anyKey(h,['nahi','no'])){await charSays(id,'Achha, nahi? Koi baat nahi.','think','neutral');return 'no'}
+  if(anyKey(h,['haan','yes','okay','theek'])){await charSays(id,'Achha, haan!','idle','happy');return 'yes'}
+  return null;
+}
 /* ===== voice-aware turn engine (replaces the touch-only versions) ===== */
 function listenHTML(){
   if(!micOK()||!SC||SC.level===1||!['pick','choose','repeat'].includes(SC.phase))return '';
@@ -1212,7 +1255,7 @@ function waitInput(id,o={}){return new Promise(res=>{
 })}
 function listenNow(id){
   if(!micOK()||!alive(id)||!SC.resolve||SC.listening)return;
-  SC.listening=true;SC.heard='';refreshTray();
+  SC.listening=true;SC.heard='';refreshTray();if(VMODE())sfx('ting');
   startRec(t=>{if(!alive(id))return;SC.heard=t;const k=document.getElementById('heard');if(k)k.textContent=t},
     f=>{if(!alive(id))return;SC.listening=false;if(!SC.resolve)return;SC.resolve(f?{type:'speech',...f}:{type:'silence'})});
 }
@@ -1229,7 +1272,7 @@ async function reactOff(id,st,heard,tries,right){
 async function nudge(id,st,tries,right){
   const again=String(st.line||'').replace(/,?\s*\{name\}\s*/g,' ').replace(/\s+/g,' ').trim();
   if(tries===1)await charSays(id,'Bolo na! '+again,'think','neutral');
-  else{SC.keepHint=true;await charSays(id,tries===2?'Main sun raha hoon. Aaram se bolo.':'Koi baat nahi. Card dabao ya mere saath bolo.','think','neutral');if(right&&alive(id)){await say('Aise bolo:',NARR);await kidSays(id,right,true)}}
+  else{SC.keepHint=true;await charSays(id,tries===2?'Main sun raha hoon. Aaram se bolo.':'Koi baat nahi. Mere saath bolo.','think','neutral');if(right&&alive(id)){await say('Aise bolo:',NARR);await kidSays(id,right,true)}}
 }
 async function doSay(id,st){
   SC.opts=shuffle(st.opts.map(o=>Object.assign([...o],{gone:false})));SC.phase='pick';SC.keepHint=false;
@@ -1244,7 +1287,11 @@ async function doSay(id,st){
       if(inp.type==='opt'){opt=inp.opt;text=fillN(opt[1]);good=!!opt[2]}
       else if(inp.type==='speech'){spoken=true;text=inp.text;SC.said++;good=anyKey(inp,keys);if(!good)opt=SC.opts.find(o=>!o[2]&&!o.gone&&contentWords(o[1]).length&&keyScore(inp,contentWords(o[1]))>=.5)||null}
       else if(inp.type==='silence'){tries++;SC.phase='talk';await nudge(id,st,tries,rightText);SC.phase='pick';continue}
+      else if(inp.type==='again'){SC.phase='talk';await charSays(id,st.line,st.gesture||'idle');SC.phase='pick';continue}
+      else if(inp.type==='help'){SC.phase='talk';await say('Tum bolo:',NARR);await kidSays(id,rightText,true);SC.phase='pick';continue}
+      else if(inp.type==='skip'){opt=right;text=rightText;good=true}
       else continue;
+      SC.lastInp=inp;
     }
     SC.phase='talk';
     if(spoken)await heardBubble(id,text);else await kidSays(id,text);
@@ -1258,22 +1305,28 @@ async function doSay(id,st){
       return wrong?1:2;
     }
     wrong++;tries++;SC.kidEmo='neutral';
-    if(spoken&&!opt)await reactOff(id,st,text,tries,rightText);else{await huh(id,st,wrong);if(tries>=2&&alive(id)){SC.keepHint=true;await say('Tum bol sakte ho:',NARR);await kidSays(id,rightText,true)}}
+    if(spoken&&!opt){const did=VMODE()?await intentReact(id,SC.lastInp):null;
+      if(did){if(!alive(id))return 0;const again=String(st.line||'').replace(/,?\s*\{name\}\s*/g,' ').replace(/\s+/g,' ').trim();await charSays(id,'Par pehle mera sawaal: '+again,'think','happy');if(tries>=2&&alive(id)){await say('Tum bolo:',NARR);await kidSays(id,rightText,true)}}
+      else await reactOff(id,st,text,tries,rightText)}else{await huh(id,st,wrong);if(tries>=2&&alive(id)){SC.keepHint=true;await say('Tum bol sakte ho:',NARR);await kidSays(id,rightText,true)}}
     if(!alive(id))return 0;
     if(opt)opt.gone=true;SC.phase='pick';SC.kidEmo='happy';if(SC.level===3)SC.hint=true;
   }
   return 0;
 }
 async function doChoose(id,st){
-  SC.objs=st.objs;SC.phase='choose';SC.keepHint=false;
+  SC.objs=st.objs;SC.phase='choose';SC.keepHint=false;SC.voiceTouch=!VMODE();
   let obj=null,spoken=false,heard='',tries=0;
   if(SC.level===1){renderScene();await sleep(1300);if(!alive(id))return 0;SC.hintObj=Math.floor(Math.random()*st.objs.length);renderScene();await sleep(900);obj=st.objs[SC.hintObj]}
   else while(!obj&&alive(id)){
     const inp=await waitInput(id,{listen:tries<6});if(!alive(id))return 0;
     if(inp.type==='obj')obj=inp.obj;
+    else if(inp.type==='again'){SC.phase='talk';await charSays(id,st.line,st.gesture||'point');SC.phase='choose'}
+    else if(inp.type==='help'){SC.phase='talk';await say('Tum bolo:',NARR);await kidSays(id,st.model.replace(/\{item\}/g,st.objs[0][1]),true);SC.phase='choose'}
+    else if(inp.type==='skip')obj=st.objs[0];
     else if(inp.type==='speech'){SC.said++;heard=inp.text;obj=st.objs.find(o=>anyKey(inp,o.slice(1)));
-      if(obj)spoken=true;else{tries++;SC.phase='talk';await heardBubble(id,inp.text);await reactOff(id,st,inp.text,tries,null);if(tries>=2)await say('Touch karke bhi bata sakte ho!',NARR);SC.phase='choose'}}
-    else if(inp.type==='silence'){tries++;SC.phase='talk';await charSays(id,tries===1?'Bolo na, kya chahiye?':'Naam bolo, ya touch karke batao!','point','neutral');SC.phase='choose'}
+      if(obj)spoken=true;else{tries++;SC.phase='talk';await heardBubble(id,inp.text);const did=VMODE()?await intentReact(id,inp):null;if(!did)await reactOff(id,st,inp.text,tries,null);if(!alive(id))return 0;
+        if(VMODE()){await charSays(id,'Bolo, kya chahiye? '+st.objs.slice(0,3).map(o=>o[1]).join(', ')+'?','point','happy');if(tries>=2){await say('Tum bolo:',NARR);await kidSays(id,st.model.replace(/\{item\}/g,st.objs[0][1]),true)}if(tries>=3){SC.voiceTouch=true}}else if(tries>=2)await say('Touch karke bhi bata sakte ho!',NARR);SC.phase='choose'}}
+    else if(inp.type==='silence'){tries++;SC.phase='talk';await charSays(id,tries===1?'Bolo na, kya chahiye?':VMODE()?'Bolo: '+st.objs.slice(0,3).map(o=>o[1]).join(', ')+'?':'Naam bolo, ya touch karke batao!','point','neutral');if(VMODE()&&tries>=2){await say('Tum bolo:',NARR);await kidSays(id,st.model.replace(/\{item\}/g,st.objs[0][1]),true)}if(tries>=3)SC.voiceTouch=true;SC.phase='choose'}
   }
   if(!alive(id))return 0;
   SC.item=obj[1];SC.objs=null;SC.phase='talk';
@@ -1299,6 +1352,7 @@ async function repeatIt(id,sentence){
     SC.phase='repeat';
     const inp=await waitInput(id,{listen:tries<4});if(!alive(id))return false;
     if(inp.type==='skip'){SC.phase='talk';SC.model='';return false}
+    if(inp.type==='again'||inp.type==='help'){await kidSays(id,sentence,true);continue}
     if(inp.type==='said'){SC.said++;SC.phase='talk';SC.model='';await burst(id);await say(pick(FULL_PRAISE),NARR);return !SC.peeked||SC.level<3}
     if(inp.type==='speech'){
       SC.said++;await heardBubble(id,inp.text);
@@ -1312,6 +1366,7 @@ async function repeatIt(id,sentence){
 
 /* ===== Aarav: real back-and-forth by voice ===== */
 function chatTray(){
+  if(VMODE())return voiceTray();
   if(SC.phase==='pick'&&SC.opts)return `<p class="ask">${micOK()?'🗣️ Bolo, ya card dabao':'👆 '+esc(kidName())+' kya bolega?'}</p>${listenHTML()}<div class="cards">${SC.opts.map((o,i)=>`<button class="acard${SC.hint&&i===0?' glow':''}" data-ai="${i}"><span>${o[0]}</span>${esc(T(o[1]))}</button>`).join('')}</div>`;
   if(SC.phase==='repeat')return trayHTML();
   return `<div class="waiting"><span></span><span></span><span></span></div>`;
@@ -1326,10 +1381,13 @@ async function chatTurn(id,opts,isAsk){
   while(alive(id)){
     const inp=await waitInput(id,{listen:tries<5});if(!alive(id))return null;
     if(inp.type==='opt')return {text:inp.opt[1],opt:inp.opt,spoken:false};
+    if(inp.type==='skip')return {text:opts[0][1],opt:opts[0],spoken:false};
+    if(inp.type==='help'){await say('Tum bolo:',NARR);await kidSays(id,opts[0][1],true);continue}
+    if(inp.type==='again'){SC.phase='talk';await charSays(id,SC.line,'think');SC.phase='pick';continue}
     if(inp.type==='speech'){SC.said++;const q=anyKey(inp,QWORDS)||/\?/.test(inp.text);
       if(!isAsk||q)return {text:inp.text,opt:isAsk?(opts.find(o=>{const k=contentWords(o[1]).filter(z=>!['arav','tumhe','tumhara','tumhare','pasand','favourite','kaunsa','kaun','hai','kya'].includes(z));return k.length&&keyScore(inp,k)>=.5})||null):(opts.find(o=>anyKey(inp,[o[2]]))||null),spoken:true};
       tries++;SC.phase='talk';await heardBubble(id,inp.text);await charSays(id,`Achha! Ab mujhse ek sawaal poocho. Jaise: ${opts[0][1]}`,'think');SC.phase='pick';continue}
-    if(inp.type==='silence'){tries++;SC.phase='talk';await charSays(id,tries===1?'Bolo na, main sun raha hoon!':'Card dabao, ya mere saath bolo.','think');if(tries>=2){SC.hint=true;await kidSays(id,opts[0][1],true)}SC.phase='pick'}
+    if(inp.type==='silence'){tries++;SC.phase='talk';await charSays(id,tries===1?'Bolo na, main sun raha hoon!':VMODE()?'Mere saath bolo.':'Card dabao, ya mere saath bolo.','think');if(tries>=2){SC.hint=true;await kidSays(id,opts[0][1],true)}SC.phase='pick'}
   }
   return null;
 }
