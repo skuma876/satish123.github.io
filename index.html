@@ -501,6 +501,9 @@ body.listening .bub.kb{box-shadow:0 0 0 3px #DD6A50}
 .pbtn{border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-weight:700;font-size:.85rem}
 .counter .obj:disabled{opacity:1;cursor:default}
 
+.micban{position:fixed;left:10px;right:10px;top:calc(8px + env(safe-area-inset-top,0px));z-index:50;background:#FFF3E0;border:3px solid #FB8C00;border-radius:18px;padding:10px 12px;font-weight:600;font-size:.95rem;color:#3A2600;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.micban button{margin-left:6px;border:0;background:#FB8C00;color:#fff;border-radius:99px;padding:6px 12px;font-weight:800}
+
 </style>
 </head><body><div class="wrap" id="app"></div>
 <script>
@@ -723,7 +726,8 @@ function toDeva(s){
 /* ================= LISTENING: Shivansh speaks, the app understands ================= */
 const SR=(typeof VOICE!=='undefined'&&VOICE)?(window.SpeechRecognition||window.webkitSpeechRecognition||null):null;
 let REC=null;
-const micOK=()=>!!(SR&&PROFILE.mic!==false);
+let MIC_BLOCKED=false;
+const micOK=()=>!!(SR&&PROFILE.voiceOff!==true);
 function stopRec(){if(REC){const r=REC,f=r._fin;REC=null;try{r.onend=null;r.onresult=null;r.abort()}catch(e){}f&&f(true)}document.body.classList.remove('listening')}
 function startRec(onInterim,onFinal,ms=7000){
   stopRec();let r;try{r=new SR()}catch(e){onFinal(null);return}
@@ -731,14 +735,25 @@ function startRec(onInterim,onFinal,ms=7000){
   let text='',alts=[],ended=false;const to=setTimeout(()=>{try{r.stop()}catch(e){}},ms);
   document.body.classList.add('listening');
   r.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++){t+=e.results[i][0].transcript;if(e.results[i].isFinal)alts=Array.from(e.results[i]).map(a=>a.transcript)}text=t;onInterim&&onInterim(t)};
-  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){PROFILE.mic=false;try{Store.profile()}catch(x){}toast('Mic ki permission nahi mili. Touch se khelte hain.')}};
+  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){if(!MIC_BLOCKED)toast('Mic band hai. Chrome mein mic Allow karein.');MIC_BLOCKED=true;micBanner()}};
+  r.onstart=()=>{if(MIC_BLOCKED){MIC_BLOCKED=false;micBanner()}};
   r._fin=(aborted)=>{if(ended)return;ended=true;clearTimeout(to);if(REC===r)REC=null;document.body.classList.remove('listening');onFinal(!aborted&&text?{text,alts:alts.length?alts:[text]}:null)};
   r.onend=()=>r._fin(false);
   try{r.start()}catch(e){ended=true;clearTimeout(to);document.body.classList.remove('listening');onFinal(null)}
 }
 const listenOnce=(onInterim,ms)=>new Promise(res=>startRec(onInterim,res,ms));
 /* ask for the mic once, on the first tap */
-function primeMic(){if(!micOK())return;try{navigator.mediaDevices&&navigator.mediaDevices.getUserMedia({audio:true}).then(s=>s.getTracks().forEach(t=>t.stop())).catch(()=>{PROFILE.mic=false})}catch(e){}}
+function primeMic(){if(!micOK())return;try{navigator.mediaDevices&&navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{MIC_BLOCKED=false;s.getTracks().forEach(t=>t.stop());micBanner()}).catch(e=>{if(e&&e.name==='NotAllowedError'){MIC_BLOCKED=true;micBanner()}})}catch(e){}}
+/* a clear message for parents when the phone/browser cannot listen */
+function micBanner(){
+  if(typeof VOICE==='undefined'||!VOICE)return;
+  let b=document.getElementById('micban');
+  const msg=!SR?'Is browser mein awaaz sunne ki suvidha nahi hai. Ye link <b>Google Chrome</b> mein kholiye (WhatsApp ke andar nahi).':MIC_BLOCKED?'🎤 Mic band hai. Chrome mein upar 🔒 / ⋮ → <b>Site settings → Microphone → Allow</b> karein, phir page refresh karein.':'';
+  if(!msg){b&&b.remove();return}
+  if(!b){b=document.createElement('div');b.id='micban';b.className='micban';document.body.appendChild(b)}
+  b.innerHTML=msg+' <button id="micretry">Phir try karo</button>';
+  const r=document.getElementById('micretry');if(r)r.onclick=()=>{primeMic();if(SR&&SC&&SC.resolve)listenNow(SC.id)};
+}
 
 /* ---- understanding Hinglish (Roman or Devanagari) ---- */
 const stripNukta=s=>String(s).normalize('NFD').replace(/़/g,'').normalize('NFC');
@@ -853,7 +868,7 @@ let DB=null,SAMPLE=null;
 const WORLD={custom:[],skills:{}};
 function local(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}}
 function cacheLocal(){try{localStorage.setItem(LS,JSON.stringify({profile:PROFILE,logs:LOGS.slice(0,500),prog:PROG,aisc:AISC,deva:Object.fromEntries(Object.entries(DEVA_CACHE).slice(-400))}))}catch(e){}}
-(function boot(){const L=local();PROFILE={...DEF,...(L.profile||{})};LOGS=L.logs||[];PROG={places:{},reports:{},...(L.prog||{})};AISC=L.aisc||{};Object.assign(DEVA_CACHE,L.deva||{})})();
+(function boot(){const L=local();PROFILE={...DEF,...(L.profile||{})};delete PROFILE.mic;LOGS=L.logs||[];PROG={places:{},reports:{},...(L.prog||{})};AISC=L.aisc||{};Object.assign(DEVA_CACHE,L.deva||{})})();
 const Store={
   async pull(){if(!DB)return;
     try{const s=await DB.doc('shehar/profile').get();const d=s.data&&s.data();if(d)PROFILE={...DEF,...d}}catch(e){}
@@ -1080,7 +1095,7 @@ async function repeatIt(id,sentence){
 }
 async function runScene(id){
   await sleep(450);
-  for(SC.step=0;SC.step<SC.steps.length;SC.step++){
+  for(SC.step=0;alive(id)&&SC.step<SC.steps.length;SC.step++){
     if(!alive(id))return;
     const st=SC.steps[SC.step];SC.model='';SC.item='';SC.kidLine='';SC.opts=null;SC.objs=null;SC.kidG='idle';SC.kidEmo='happy';SC.phase='char';SC.hint=false;SC.hintObj=null;renderScene();
     await charSays(id,st.line,st.gesture||'idle');
@@ -2143,15 +2158,15 @@ function pSettings(){
   $('#vt1').onclick=()=>tmp(()=>say('Aao aao baccha! Kaunsi sabzi chahiye?',{g:'f',pitch:1}));
   $('#vt2').onclick=()=>tmp(()=>say('Namaste beta! Bolo, kya chahiye?',{g:'m',pitch:.82}));
   $('#vt3').onclick=()=>tmp(()=>say('Kaka, mujhe ek chocolate chahiye, please.',KIDV()));
-  if(VOICE){$('#vm').value=PROFILE.mic===false?'0':'1';$('#vr').value=PROFILE.recLang||'hi-IN';
-    $('#mt').onclick=()=>{if(!SR){$('#mtr').textContent='Is browser mein mic se sunna nahi chalta. Android par Google Chrome use karein.';return}PROFILE.recLang=$('#vr').value;PROFILE.mic=true;$('#mtr').textContent='🎤 Kuch boliye… (jaise: Kaka, mujhe chocolate chahiye)';startRec(t=>{$('#mtr').textContent='Sun raha hoon: '+t},f=>{$('#mtr').textContent=f?'Suna: "'+f.text+'" ✓':'Kuch sunai nahi diya. Chrome mein mic ki permission check karein.'})}}
-  $('#ss').onclick=async()=>{if(VOICE){PROFILE.mic=$('#vm').value==='1';PROFILE.recLang=$('#vr').value;PROFILE.apiKey=$('#sk').value.trim();SAMPLE=apiSample()}PROFILE={...PROFILE,name:$('#sn').value.trim()||'Shivansh',nameDeva:$('#snd').value.trim(),interests:$('#si').value.split(',').map(s=>s.trim()).filter(Boolean),voice:$('#sv').value,rate:+$('#sp').value,script:$('#ss2').value,gameSpeed:$('#gsp').value,limitMin:+$('#sl').value,targets:[$('#t0').value,$('#t1').value,$('#t2').value].map(s=>s.trim()||'Goal'),look:{...PROFILE.look,skin:$('#ak').value,hair:$('#ah').value,main:$('#ac').value}};await Store.profile();toast('Save ho gaya')};
+  if(VOICE){$('#vm').value=PROFILE.voiceOff?'0':'1';$('#vr').value=PROFILE.recLang||'hi-IN';
+    $('#mt').onclick=()=>{if(!SR){$('#mtr').textContent='Is browser mein mic se sunna nahi chalta. Android par Google Chrome use karein.';return}PROFILE.recLang=$('#vr').value;$('#mtr').textContent='🎤 Kuch boliye… (jaise: Kaka, mujhe chocolate chahiye)';startRec(t=>{$('#mtr').textContent='Sun raha hoon: '+t},f=>{$('#mtr').textContent=f?'Suna: "'+f.text+'" ✓':'Kuch sunai nahi diya. Chrome mein mic ki permission check karein.'})}}
+  $('#ss').onclick=async()=>{if(VOICE){PROFILE.voiceOff=$('#vm').value!=='1';PROFILE.recLang=$('#vr').value;PROFILE.apiKey=$('#sk').value.trim();SAMPLE=apiSample()}PROFILE={...PROFILE,name:$('#sn').value.trim()||'Shivansh',nameDeva:$('#snd').value.trim(),interests:$('#si').value.split(',').map(s=>s.trim()).filter(Boolean),voice:$('#sv').value,rate:+$('#sp').value,script:$('#ss2').value,gameSpeed:$('#gsp').value,limitMin:+$('#sl').value,targets:[$('#t0').value,$('#t1').value,$('#t2').value].map(s=>s.trim()||'Goal'),look:{...PROFILE.look,skin:$('#ak').value,hair:$('#ah').value,main:$('#ac').value}};await Store.profile();toast('Save ho gaya')};
 }
 
 /* ================= BOOT ================= */
 go('splash');
 (async()=>{
-  if(VOICE)SAMPLE=apiSample();
+  if(VOICE){SAMPLE=apiSample();setTimeout(micBanner,500)}
   try{const c=window.claude;if(c&&c.use){const [db,sm]=await Promise.all([c.use('db').catch(()=>null),c.use('sample').catch(()=>null)]);DB=db;SAMPLE=sm}}catch(e){}
   await Store.pull();
   if(current==='home')SCREENS.home();
