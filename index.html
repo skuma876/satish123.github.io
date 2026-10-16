@@ -735,6 +735,189 @@ section.hello h1{font-size:1.9rem;white-space:nowrap}
 .convo{border-top:1px solid #EEF0F8;padding:6px 0}.convo summary{cursor:pointer;font-weight:600}
 .convo p{margin:4px 0 4px 6px;font-size:.95rem}.convo p.kid{color:#5B3BE0}
 
+/* ================= v9 Bug World ================= */
+#app.scr-in{animation:scrIn .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes scrIn{from{opacity:0;transform:translateY(10px) scale(.99)}}
+@media (prefers-reduced-motion:reduce){#app.scr-in{animation:none}}
+.crit{display:block;width:100%;height:100%;overflow:visible}
+.crit .wing{transform-box:fill-box;transform-origin:center bottom;animation:buzz9 .12s ease-in-out infinite alternate}
+.crit .wl{transform-box:view-box;transform-origin:50px 50px;animation:flapL .45s ease-in-out infinite alternate}
+.crit .wr{transform-box:view-box;transform-origin:50px 50px;animation:flapR .45s ease-in-out infinite alternate}
+@keyframes flapL{to{transform:scaleX(.6)}}@keyframes flapR{to{transform:scaleX(.6)}}
+@keyframes buzz9{to{transform:scaleY(.6)}}
+.crit .cr-walk{animation:walk9 .6s ease-in-out infinite alternate;transform-box:view-box;transform-origin:50px 90px}
+@keyframes walk9{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.crit .cr-hover{animation:hover9 1.4s ease-in-out infinite}
+@keyframes hover9{50%{transform:translateY(-4px)}}
+.crit .cr-inch{animation:inch9 .9s ease-in-out infinite;transform-box:view-box;transform-origin:0 70px}
+@keyframes inch9{50%{transform:scaleX(.92) translateY(-2px)}}
+.crit .cr-hop{animation:hop9 1.6s ease-in-out infinite}
+@keyframes hop9{0%,70%,100%{transform:none}80%{transform:translateY(-10px)}}
+.crit .cr-slither{animation:sl9 1.2s ease-in-out infinite alternate;transform-box:view-box;transform-origin:50px 50px}
+@keyframes sl9{to{transform:skewX(-5deg)}}
+.crit .glow{animation:glow9 1.2s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px #FFEB3B)}
+@keyframes glow9{from{opacity:.45}to{opacity:1}}
+.tongue{animation:tongue9 2.4s steps(1) infinite}
+@keyframes tongue9{0%,70%{opacity:0}72%,90%{opacity:1}92%{opacity:0}}
+.chr.snake .sway{transform-box:view-box;transform-origin:100px 330px;animation:sway9 3s ease-in-out infinite}
+@keyframes sway9{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}}
+.chr.snake .m-talk .tongue{animation:none;opacity:1}
+.chr.snake .tail{transform-box:fill-box;transform-origin:left bottom;animation:tail9 1.2s ease-in-out infinite alternate}
+@keyframes tail9{to{transform:rotate(18deg)}}
+
+/* home hero */
+.bwhome{position:relative;display:block;width:100%;height:150px;border:0;border-radius:28px;overflow:hidden;padding:0;box-shadow:var(--v6shadow);border:4px solid #fff;text-align:left;cursor:pointer}
+.bwhome .bgd{position:absolute;inset:0;width:100%;height:100%}
+.bwh-s{position:absolute;right:8px;bottom:-26px;width:96px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.2))}.bwh-s svg{width:100%;height:auto;display:block}
+.bwh-t{position:absolute;left:16px;top:14px;display:flex;flex-direction:column;color:#1B3A12}
+.bwh-t b{font-family:var(--display);font-size:1.9rem;line-height:1;text-shadow:0 2px 0 rgba(255,255,255,.7)}
+.bwh-t small{font-weight:700;font-size:.95rem;opacity:.85}
+.bwh-go{position:absolute;left:16px;bottom:14px;width:46px;height:46px;border-radius:50%;background:#FF7A59;color:#fff;display:grid;place-items:center;font-size:1.3rem;box-shadow:0 4px 0 #C2462B;animation:nudge6 1.4s ease-in-out infinite}
+.bw-fly,.bw-walk{position:absolute;width:52px;height:52px;pointer-events:none}
+.bw-fly.b1{left:42%;top:12%;animation:flyA 7s ease-in-out infinite}
+.bw-fly.b2{left:10%;top:30%;width:42px;height:42px;animation:flyB 6s ease-in-out infinite}
+.bw-walk.w1{bottom:6%;left:-60px;animation:walkA 11s linear infinite}
+.bw-walk.w2{bottom:3%;left:-60px;width:36px;height:36px;animation:walkA 15s linear infinite 3s}
+@keyframes flyA{0%,100%{transform:translate(0,0) rotate(-6deg)}25%{transform:translate(60px,-14px) rotate(8deg)}50%{transform:translate(20px,22px)}75%{transform:translate(-50px,4px) rotate(-10deg)}}
+@keyframes flyB{0%,100%{transform:translate(0,0)}33%{transform:translate(70px,20px)}66%{transform:translate(30px,-16px)}}
+@keyframes walkA{from{transform:translateX(0)}to{transform:translateX(520px)}}
+
+/* bug world hub */
+.bwhero{position:relative;height:230px;border-radius:30px;overflow:hidden;box-shadow:var(--v6shadow);border:4px solid #fff}
+.bwhero .bgd{position:absolute;inset:0;width:100%;height:100%}
+.bw-sanju{position:absolute;left:50%;bottom:-40px;height:230px;transform:translateX(-50%);filter:drop-shadow(0 8px 10px rgba(0,0,0,.2))}.bw-sanju svg{height:100%;width:auto}
+.bw-bub{position:absolute;left:12px;top:12px;max-width:52%;background:#fff;border-radius:18px;padding:8px 12px;font-family:var(--display);font-weight:800;font-size:1.1rem;box-shadow:0 4px 12px rgba(0,0,0,.15);border:3px solid #43A047;animation:pop6 .4s ease-out}
+.bwgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bwtile{border:0;border-radius:24px;background:var(--bc);padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 5px 0 rgba(27,31,59,.12),0 10px 18px rgba(0,0,0,.06);color:var(--v6ink);min-height:132px;cursor:pointer;transition:transform .1s}
+.bwtile:active{transform:scale(.96)}
+.bwtile.wide{grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:12px;min-height:110px;text-align:left;background:linear-gradient(135deg,#B9F6CA,#69F0AE)}
+.bwtile.wide .bwe{width:84px;height:96px;background:none}.bwtile.wide .bwe svg{height:120%;width:auto;margin-top:18px}
+.bwe{font-size:2.8rem;width:70px;height:70px;border-radius:22px;background:rgba(255,255,255,.65);display:grid;place-items:center;overflow:hidden;position:relative}
+.bwtile b{font-family:var(--display);font-size:1.15rem;line-height:1.1}.bwtile small{font-size:.8rem;opacity:.7;font-weight:700}
+.jarn{position:absolute;top:4px;right:6px;font-size:.8rem;background:#FF7A59;color:#fff;border-radius:99px;padding:0 6px}
+
+/* game arenas */
+.gkarena.bugbg{background:linear-gradient(180deg,#E1F5FE 0%,#E8F5E9 55%,#C5E1A5 100%)}
+.gkarena.bugbg::before{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:radial-gradient(60px 26px at 10% 100%,#9CCC65,transparent),radial-gradient(80px 30px at 50% 100%,#8BC34A,transparent),radial-gradient(70px 26px at 90% 100%,#9CCC65,transparent);pointer-events:none}
+.gwant{position:absolute;right:10px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;background:#fff;border-radius:18px;padding:4px 12px 4px 4px;box-shadow:0 4px 12px rgba(0,0,0,.15);border:3px solid #FFC53D}
+.gwant .crit,.gwant svg{width:46px;height:46px}.gwant b{font-family:var(--display);font-size:1.05rem}
+.gwant.pulse{animation:pop6 .4s ease-out}
+.ear9{font-size:2rem;width:46px;text-align:center}
+.gbug{position:absolute;left:0;top:0;width:74px;height:74px;border:0;background:none;padding:4px;cursor:pointer;z-index:3;filter:drop-shadow(0 4px 4px rgba(0,0,0,.18))}
+.snk{position:absolute;left:6px;bottom:6px;height:84px;max-width:96%;z-index:2;transition:all .3s}
+.snk svg{height:100%;width:auto;max-width:100%;display:block}
+.snk.chomp .snkhead{animation:chomp9 .4s ease-out}
+@keyframes chomp9{50%{transform:scale(1.15)}}
+.snkhead{transform-box:fill-box;transform-origin:center}
+
+.leafgrid{position:absolute;inset:66px 10px 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.leafgrid.g12{grid-template-columns:repeat(4,1fr)}
+.lf{position:relative;border:0;background:rgba(255,255,255,.35);border-radius:20px;padding:0;cursor:pointer;overflow:visible}
+.lf-bug{position:absolute;inset:14%;display:block}
+.lf-leaf{position:absolute;inset:0;display:block;transition:transform .45s cubic-bezier(.3,1.4,.5,1);transform-origin:20% 90%;z-index:2;filter:drop-shadow(0 4px 4px rgba(0,0,0,.2))}
+.lf-leaf svg{width:100%;height:100%}
+.lf.open .lf-leaf{transform:rotate(-70deg) translate(-10%,-20%) scale(.8);opacity:.85}
+.lf.got{background:#FFF59D;box-shadow:0 0 0 4px #FFC53D inset}
+.lf.count::after{content:attr(data-n);position:absolute;top:-6px;right:-6px;width:30px;height:30px;border-radius:50%;background:#FF7A59;color:#fff;font-weight:800;display:grid;place-items:center;z-index:4;animation:pop6 .3s}
+.numq{position:absolute;left:10px;right:10px;bottom:10px;z-index:5;background:#fff;border-radius:22px;padding:10px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.2);animation:pop6 .3s}
+.numq b{font-family:var(--display);font-size:1.3rem}.numq div{display:flex;gap:10px;justify-content:center;margin-top:6px}
+.numq .numb{width:74px;height:74px;font-size:2.2rem;font-family:var(--display);font-weight:800;border-radius:20px;border:0;background:#E3DEFF;color:#3A2A8C;box-shadow:0 5px 0 #B9AEF0}
+.numq .numb.ok{background:#B9F6CA}
+
+.ssgrid{position:absolute;inset:70px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ssb{border:0;border-radius:26px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;box-shadow:0 6px 0 rgba(27,31,59,.12),0 10px 18px rgba(0,0,0,.08);cursor:pointer}
+.ssb .crit{width:72%;height:auto;aspect-ratio:1;max-height:70%}.ssb small{font-family:var(--display);font-weight:800;font-size:1.1rem;color:var(--v6ink)}
+.ssb.hop,.jarit.hop{animation:hop6 .45s ease-out}
+
+.branch{position:absolute;left:-10px;right:30%;top:34%;height:16px;background:#8D6E63;border-radius:10px;transform:rotate(-4deg)}
+.cat{position:absolute;left:8%;top:12%;width:60%;max-width:280px;transition:all .3s}
+.cnum{position:absolute;right:12px;top:66px;background:#fff;border-radius:20px;padding:6px 12px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:70px}
+.cnum b{display:block;font-family:var(--display);font-size:2.4rem;line-height:1;color:#FF7A59}
+.cnum span{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;max-width:110px}.cnum i{width:14px;height:14px;border-radius:50%;background:#E0E0E0}.cnum i.on{background:#7CB342}
+.leafrow{position:absolute;left:8px;right:8px;bottom:12px;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;z-index:3}
+.leafb{border:0;background:none;padding:0;aspect-ratio:1;cursor:pointer;transition:transform .6s ease-in;filter:drop-shadow(0 4px 3px rgba(0,0,0,.2))}
+.leafb svg{width:100%;height:100%}.leafb.used{opacity:.2}.leafb.grow{animation:pop6 .4s}
+.meta{position:absolute;inset:0;display:grid;place-items:center}
+.meta>div{position:absolute;width:55%;max-width:240px}
+.meta .m1{animation:mOut 1.2s ease-in forwards}
+.meta .m2{opacity:0;animation:mCoc 2.4s ease-in-out .9s forwards}
+.meta .m3{opacity:0;animation:mFly 2.4s cubic-bezier(.2,.8,.2,1) 3s forwards}
+@keyframes mOut{to{transform:scale(.4);opacity:0}}
+@keyframes mCoc{0%{opacity:0;transform:scale(.3)}20%{opacity:1;transform:scale(1)}30%,50%,70%{transform:rotate(-6deg)}40%,60%{transform:rotate(6deg)}100%{opacity:0;transform:scale(1.1)}}
+@keyframes mFly{0%{opacity:0;transform:scale(.2)}40%{opacity:1;transform:scale(1.2)}100%{opacity:1;transform:scale(1) translateY(-20px)}}
+
+.train{position:absolute;left:0;right:0;top:80px;display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:10px 12px 26px;scroll-behavior:smooth}
+.train .engine{font-size:3.4rem;flex:0 0 auto;transform:scaleX(-1)}
+.wagon{flex:0 0 auto;width:66px;height:66px;background:#FFE0B2;border:4px solid #FF9800;border-radius:14px;position:relative;padding:4px}
+.wagon::after{content:"";position:absolute;left:6px;right:6px;bottom:-16px;height:14px;background:radial-gradient(circle at 25% 50%,#455A64 6px,transparent 7px),radial-gradient(circle at 75% 50%,#455A64 6px,transparent 7px)}
+.wagon.q{background:#fff;border-style:dashed;display:grid;place-items:center;animation:nudge6 1.2s infinite}
+.wagon.q b{font-size:2.2rem;color:#FF7A59;font-family:var(--display)}
+.wagon.fill{animation:pop6 .35s}
+.train.go{animation:chug9 .9s ease-in-out}
+@keyframes chug9{50%{transform:translateX(-14px)}}
+.tchoices{position:absolute;left:10px;right:10px;bottom:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tch{border:0;border-radius:22px;background:#fff;padding:8px;display:flex;flex-direction:column;align-items:center;box-shadow:0 6px 0 rgba(27,31,59,.12)}
+.tch .crit{width:70px;height:70px}.tch small{font-family:var(--display);font-weight:800}
+
+/* bug jar */
+.jarhead{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF6E0,#FBE3F1);border-radius:26px;padding:14px;box-shadow:var(--v6shadow)}
+.jarhead h2{margin:0;font-size:2rem}.jarhead p{margin:2px 0 6px;font-weight:700}
+.jarbig{width:96px;height:96px;background:#fff;border-radius:50%;padding:10px;box-shadow:0 0 0 6px rgba(255,197,61,.4);flex:0 0 auto}
+.jarhead .bar,.w9-jar .bar,.jarshelf .bar{height:12px;border-radius:99px;background:#EEF0F8;overflow:hidden}
+.jarhead .bar i,.w9-jar .bar i,.jarshelf .bar i{display:block;height:100%;background:linear-gradient(90deg,#FFC53D,#FF7A59);border-radius:99px}
+.jargrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.jarit{border:0;background:#fff;border-radius:20px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 #E2E6F2;cursor:pointer}
+.jarit .crit{width:58px;height:58px}.jarit small{font-size:.68rem;font-weight:700;text-align:center;line-height:1.1}
+.jarit.lock{background:#F1F2F8;box-shadow:none}.jarit.lock .crit{filter:brightness(0) opacity(.18)}.jarit.lock .crit *{animation:none!important}
+.jarshelf{display:block;width:100%;text-align:left;border:0;cursor:pointer}
+.jarrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.jarrow span{width:46px;height:46px;background:#F5F7FF;border-radius:14px;padding:3px}
+.jarrow span.lock .crit{filter:brightness(0) opacity(.15)}.jarrow span.lock .crit *{animation:none!important}
+
+/* reveal */
+.reveal{position:fixed;inset:0;z-index:200;background:rgba(20,16,50,.72);display:grid;place-items:center;padding:16px;animation:fadeIn9 .25s}
+.reveal.out{animation:fadeOut9 .3s forwards}
+@keyframes fadeIn9{from{opacity:0}}@keyframes fadeOut9{to{opacity:0}}
+.rv-card{position:relative;background:#fff;border-radius:32px;padding:26px 18px 20px;text-align:center;max-width:360px;width:100%;overflow:hidden;animation:rvIn .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes rvIn{from{transform:scale(.3) rotate(-10deg);opacity:0}}
+.rv-rays{position:absolute;left:50%;top:110px;width:520px;height:520px;margin:-260px 0 0 -260px;background:repeating-conic-gradient(#FFF3C4 0 10deg,#fff 10deg 20deg);animation:spin6 12s linear infinite;opacity:.9}
+.rv-art{position:relative;width:170px;height:170px;margin:0 auto;filter:drop-shadow(0 10px 10px rgba(0,0,0,.2));animation:bob6 1.6s ease-in-out infinite}
+.rv-card h2{position:relative;margin:8px 0 4px;font-size:1.7rem;line-height:1.1}.rv-card p{position:relative;margin:0 0 14px;font-weight:600}
+.rv-card .cta{position:relative}
+
+/* confetti */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;animation:conf9 2.6s cubic-bezier(.3,.6,.4,1) forwards}
+@keyframes conf9{to{transform:translate(var(--x),105vh) rotate(var(--r))}}
+
+/* celebrate */
+.win9{position:relative;overflow:hidden}
+.w9-sanju{width:150px;height:200px;margin:-6px auto -10px;animation:dance9 .8s ease-in-out infinite alternate}
+.w9-sanju svg{height:100%;width:auto}
+@keyframes dance9{from{transform:rotate(-5deg) translateY(0)}to{transform:rotate(5deg) translateY(-6px)}}
+.w9-praise{font-family:var(--display);font-weight:800;font-size:1.3rem!important;color:#43A047}
+.w9-jar{width:100%;max-width:300px;background:#FFF6E0;border-radius:18px;padding:8px 12px;display:flex;flex-direction:column;gap:4px;font-weight:800}
+.w9-jar small{font-weight:600;opacity:.75}
+
+/* AI visual supports */
+.pov-show{position:absolute;right:10px;top:42%;z-index:6;display:flex;flex-direction:column;gap:8px}
+.pov-show span{width:62px;height:62px;border-radius:20px;background:#fff;display:grid;place-items:center;font-size:2.4rem;box-shadow:0 6px 14px rgba(0,0,0,.2);animation:popIn9 .4s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes popIn9{from{transform:scale(0) rotate(-20deg);opacity:0}}
+.choice9 .pic{min-height:110px;border:3px solid #FFC53D;animation:popIn9 .4s both}
+.choice9 .pic span{font-size:3.4rem}.choice9 .pic.picked{background:#B9F6CA;border-color:#43A047}
+
+.leafb{min-width:0;width:100%}
+.bw-sanju{left:72%}
+.bw-bub{max-width:56%}
+.bwt{display:flex;flex-direction:column;align-items:center}
+.bwtile.wide .bwt{align-items:flex-start}.bwtile.wide .bwt b{font-size:1.5rem}
+.bwe .crit{width:84%;height:84%}
+.wagon{width:50px;height:50px;border-width:3px}
+.train .engine{font-size:2.6rem}
+.train{top:28%}
+.leafrow{grid-template-columns:repeat(3,1fr);gap:8px 14px}
+.leafb{aspect-ratio:auto;height:78px}
+.pov-show{right:auto;left:10px;top:30%}
+
 </style>
 </head><body><div class="wrap" id="app"></div>
 <script>
@@ -2263,11 +2446,11 @@ function stopRec8(){if(REC8){const r=REC8;REC8=null;r.cancel()}}
 function recordTurn(onLevel,{maxWait=8000,maxLen=12000,tail=1300}={}){
   return new Promise(async res=>{
     let done=false,stream;
-    const fin=v=>{if(done)return;done=true;try{proc&&proc.disconnect();src&&src.disconnect()}catch(e){}clearInterval(tick);if(REC8&&REC8.id===id)REC8=null;res(v)};
+    let src=null,proc=null,tick=null;const fin=v=>{if(done)return;done=true;try{proc&&proc.disconnect();src&&src.disconnect()}catch(e){}clearInterval(tick);if(REC8&&REC8.id===id)REC8=null;res(v)};
     const id=Math.random();
     try{stream=await micStream()}catch(e){if(e&&e.name==='NotAllowedError'){MIC_BLOCKED=true;micBanner()}fin({err:true});return}
     AC=AC||new (window.AudioContext||window.webkitAudioContext)();try{await AC.resume()}catch(e){}
-    const src=AC.createMediaStreamSource(stream),proc=AC.createScriptProcessor(4096,1,1),sr=AC.sampleRate;
+    try{src=AC.createMediaStreamSource(stream);proc=AC.createScriptProcessor(4096,1,1)}catch(e){fin({err:true});return}const sr=AC.sampleRate;
     const chunks=[];let floor=0.01,nf=0,started=0,lastVoice=0;const t0=performance.now();
     proc.onaudioprocess=e=>{if(done)return;const d=e.inputBuffer.getChannelData(0);let s=0;for(let i=0;i<d.length;i++)s+=d[i]*d[i];const rms=Math.sqrt(s/d.length);const now=performance.now();
       if(now-t0<350){floor=(floor*nf+rms)/(++nf);return}
@@ -2277,7 +2460,7 @@ function recordTurn(onLevel,{maxWait=8000,maxLen=12000,tail=1300}={}){
       if(started&&now-lastVoice>tail)finish();else if(started&&now-started>maxLen)finish();};
     const finish=()=>{if(done)return;const ms=performance.now()-started;if(ms<250){fin(null);return}fin({b64:toWav16k(chunks,sr),ms})};
     src.connect(proc);proc.connect(AC.destination);
-    const tick=setInterval(()=>{if(!started&&performance.now()-t0>maxWait)fin(null)},200);
+    tick=setInterval(()=>{if(!started&&performance.now()-t0>maxWait)fin(null)},200);
     REC8={id,cancel:()=>fin(null),stopNow:()=>{if(started)finish();else fin(null)}};
   });
 }
@@ -2306,6 +2489,343 @@ const _stopRec=stopRec;
 stopRec=function(){stopRec8();return _stopRec()};
 const _go8=go;
 go=function(s,...a){_go8(s,...a);if(!['scene','chat'].includes(s))micRelease()};
+
+/* =========================================================
+   v9 — BUG WORLD: snakes & insects (Shivansh's big interest)
+   Interest-based learning: his favourite topic is the hook for
+   attention, talking, counting, listening and self-control.
+   ========================================================= */
+if(!(PROFILE.interests||[]).length)PROFILE.interests=['snakes','insects','bugs'];
+['snake','snakes','saanp','insect','insects','bug','bugs','ladybug','butterfly','bee','ant','spider','caterpillar','beetle','firefly','dragonfly','worm','snail','grasshopper','keeda'].forEach(w=>INTEREST.includes(w)||INTEREST.push(w));
+
+/* ---------- 2D creature art (viewBox 100x100, cute faces) ---------- */
+const EY=(x,y,r=6)=>`<g class="eye"><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="#1B1F3B" stroke-width="1.2"/><circle cx="${x+r*.15}" cy="${y+r*.15}" r="${r*.58}" fill="#1B1F3B"/><circle cx="${x+r*.35}" cy="${y-r*.25}" r="${r*.22}" fill="#fff"/></g>`;
+const SMILE=(x,y,w=8)=>`<path d="M${x-w/2} ${y} q${w/2} ${w*.6} ${w} 0" stroke="#1B1F3B" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+const CR={
+  ladybug:(c='#E53935')=>`<g class="cr-walk"><path d="M30 46l-15-7M28 60l-17 2M32 72l-12 11M70 46l15-7M72 60l17 2M68 72l12 11" stroke="#263238" stroke-width="4" stroke-linecap="round"/>
+   <path d="M44 20q-6-12-13-13M56 20q6-12 13-13" stroke="#263238" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="31" cy="7" r="3.5" fill="#263238"/><circle cx="69" cy="7" r="3.5" fill="#263238"/>
+   <circle cx="50" cy="30" r="15" fill="#263238"/><ellipse cx="50" cy="60" rx="28" ry="29" fill="${c}"/><path d="M50 32v56" stroke="#263238" stroke-width="3"/>
+   <circle cx="37" cy="50" r="5.5" fill="#263238"/><circle cx="63" cy="50" r="5.5" fill="#263238"/><circle cx="35" cy="70" r="5" fill="#263238"/><circle cx="65" cy="70" r="5" fill="#263238"/><circle cx="50" cy="80" r="3.5" fill="#263238"/>
+   <ellipse cx="38" cy="44" rx="7" ry="4" fill="#fff" opacity=".35" transform="rotate(-30 38 44)"/>${EY(44,28,5)}${EY(56,28,5)}</g>`,
+  bee:()=>`<g class="cr-hover"><g class="wing"><ellipse cx="33" cy="34" rx="16" ry="11" fill="#E3F2FD" stroke="#90CAF9" stroke-width="2" transform="rotate(-25 33 34)"/><ellipse cx="67" cy="34" rx="16" ry="11" fill="#E3F2FD" stroke="#90CAF9" stroke-width="2" transform="rotate(25 67 34)"/></g>
+   <path d="M50 88l-5 8h10z" fill="#263238"/><ellipse cx="50" cy="62" rx="22" ry="27" fill="#FFCA28"/><path d="M29 56h42M28 68h44M32 80h36" stroke="#263238" stroke-width="7" stroke-linecap="round"/>
+   <circle cx="50" cy="30" r="15" fill="#FFCA28"/><path d="M44 17q-4-10-10-11M56 17q4-10 10-11" stroke="#263238" stroke-width="2.5" fill="none"/>${EY(44,29,5)}${EY(56,29,5)}${SMILE(50,36,7)}<circle cx="38" cy="34" r="3" fill="#FF8A80" opacity=".7"/><circle cx="62" cy="34" r="3" fill="#FF8A80" opacity=".7"/></g>`,
+  butterfly:(c='#42A5F5',c2='#FFD54F')=>`<g class="cr-hover"><g class="wl"><path d="M48 46C30 10 4 14 8 36c3 16 22 18 40 14z" fill="${c}"/><path d="M48 54C28 56 14 72 22 86c10 12 24-6 26-28z" fill="${c2}"/><circle cx="24" cy="32" r="7" fill="#fff" opacity=".55"/><circle cx="30" cy="72" r="5" fill="#fff" opacity=".5"/></g>
+   <g class="wr"><path d="M52 46C70 10 96 14 92 36c-3 16-22 18-40 14z" fill="${c}"/><path d="M52 54C72 56 86 72 78 86c-10 12-24-6-26-28z" fill="${c2}"/><circle cx="76" cy="32" r="7" fill="#fff" opacity=".55"/><circle cx="70" cy="72" r="5" fill="#fff" opacity=".5"/></g>
+   <rect x="45" y="30" width="10" height="52" rx="5" fill="#4E342E"/><circle cx="50" cy="26" r="8" fill="#4E342E"/><path d="M47 19q-6-10-11-10M53 19q6-10 11-10" stroke="#4E342E" stroke-width="2.5" fill="none"/>${EY(47,25,3)}${EY(53,25,3)}</g>`,
+  ant:(c='#6D4C41')=>`<g class="cr-walk"><path d="M42 50l-18-12M40 56l-20 4M44 62l-16 16M58 50l18-12M60 56l20 4M56 62l16 16" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+   <path d="M45 14q-5-10-12-9M55 14q5-10 12-9" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="50" cy="24" r="12" fill="${c}"/><ellipse cx="50" cy="50" rx="9" ry="11" fill="${c}"/><ellipse cx="50" cy="76" rx="15" ry="17" fill="${c}"/>${EY(45,22,4.5)}${EY(55,22,4.5)}${SMILE(50,29,6)}</g>`,
+  caterpillar:(c='#7CB342',n=5)=>{let s='<g class="cr-inch">';const sp=Math.min(14,62/Math.max(1,n-1)),x0=70-(n)*sp;for(let i=0;i<n;i++){const x=x0+i*sp,y=62+(i%2?-5:3);s+=`<circle cx="${x}" cy="${y}" r="12" fill="${i%2?c:shade(c,-12)}"/><circle cx="${x}" cy="${y+12}" r="2.5" fill="#33691E"/>`}
+   return s+`<path d="M78 34q-3-12-9-14M88 34q3-12 9-14" stroke="#33691E" stroke-width="2.5" fill="none"/><circle cx="69" cy="20" r="3" fill="#E53935"/><circle cx="97" cy="20" r="3" fill="#E53935"/><circle cx="83" cy="48" r="16" fill="${c}"/>${EY(77,45,5)}${EY(89,45,5)}${SMILE(83,54,8)}</g>`},
+  spider:(c='#7E57C2')=>`<g class="cr-walk"><path d="M36 50q-16-16-28-10M36 56q-18-4-30 4M38 62q-16 8-26 22M40 66q-8 14-14 28M64 50q16-16 28-10M64 56q18-4 30 4M62 62q16 8 26 22M60 66q8 14 14 28" stroke="${shade(c,-30)}" stroke-width="4" fill="none" stroke-linecap="round"/>
+   <circle cx="50" cy="64" r="22" fill="${c}"/><circle cx="50" cy="38" r="15" fill="${shade(c,-15)}"/><circle cx="44" cy="70" r="4" fill="#fff" opacity=".3"/>${EY(44,36,5.5)}${EY(56,36,5.5)}${SMILE(50,45,7)}</g>`,
+  beetle:(c='#1E88E5')=>`<g class="cr-walk"><path d="M30 48l-14-8M28 62l-16 2M32 76l-12 10M70 48l14-8M72 62l16 2M68 76l12 10" stroke="#263238" stroke-width="4" stroke-linecap="round"/><path d="M42 16q-4-10 4-12M58 16q4-10-4-12" stroke="#263238" stroke-width="3" fill="none"/>
+   <ellipse cx="50" cy="26" rx="14" ry="11" fill="#263238"/><ellipse cx="50" cy="62" rx="26" ry="30" fill="${c}"/><path d="M50 34v58" stroke="${shade(c,-40)}" stroke-width="3"/><ellipse cx="40" cy="52" rx="6" ry="12" fill="#fff" opacity=".3"/>${EY(45,25,4.5)}${EY(55,25,4.5)}</g>`,
+  dragonfly:(c='#26C6DA')=>`<g class="cr-hover"><g class="wl"><ellipse cx="28" cy="36" rx="24" ry="8" fill="#B2EBF2" opacity=".85" transform="rotate(-12 28 36)"/><ellipse cx="30" cy="50" rx="21" ry="7" fill="#B2EBF2" opacity=".85" transform="rotate(10 30 50)"/></g><g class="wr"><ellipse cx="72" cy="36" rx="24" ry="8" fill="#B2EBF2" opacity=".85" transform="rotate(12 72 36)"/><ellipse cx="70" cy="50" rx="21" ry="7" fill="#B2EBF2" opacity=".85" transform="rotate(-10 70 50)"/></g>
+   <rect x="46" y="32" width="8" height="62" rx="4" fill="${c}"/><circle cx="50" cy="26" r="11" fill="${c}"/>${EY(44,23,6)}${EY(56,23,6)}${SMILE(50,32,6)}</g>`,
+  firefly:()=>`<g class="cr-hover"><g class="wing"><ellipse cx="36" cy="40" rx="13" ry="9" fill="#E8EAF6" opacity=".9" transform="rotate(-30 36 40)"/><ellipse cx="64" cy="40" rx="13" ry="9" fill="#E8EAF6" opacity=".9" transform="rotate(30 64 40)"/></g>
+   <circle class="glow" cx="50" cy="76" r="16" fill="#FFEB3B"/><ellipse cx="50" cy="54" rx="13" ry="16" fill="#5D4037"/><circle cx="50" cy="32" r="11" fill="#5D4037"/>${EY(46,30,4.5)}${EY(54,30,4.5)}${SMILE(50,37,6)}</g>`,
+  grasshopper:(c='#8BC34A')=>`<g class="cr-hop"><path d="M58 60l18-22 14 40" stroke="${shade(c,-25)}" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M34 64l-8 18M42 66l-4 18" stroke="${shade(c,-25)}" stroke-width="4" stroke-linecap="round"/>
+   <ellipse cx="46" cy="58" rx="30" ry="13" fill="${c}"/><ellipse cx="50" cy="52" rx="20" ry="7" fill="${shade(c,-15)}"/><circle cx="20" cy="46" r="14" fill="${c}"/><path d="M14 34q-4-20-14-24M22 33q2-20 10-26" stroke="${shade(c,-30)}" stroke-width="2.5" fill="none"/>${EY(16,43,5.5)}${SMILE(17,52,6)}</g>`,
+  snail:(c='#FFB74D')=>`<g class="cr-walk"><path d="M8 82q40 8 86-2q0-8-10-10H18q-10 2-10 12z" fill="#BCAAA4"/><path d="M78 72v-26M88 72v-24" stroke="#BCAAA4" stroke-width="5" stroke-linecap="round"/>${EY(78,44,5)}${EY(88,46,5)}
+   <circle cx="44" cy="52" r="28" fill="${c}"/><circle cx="44" cy="52" r="19" fill="${shade(c,-15)}"/><circle cx="44" cy="52" r="10" fill="${c}"/><circle cx="44" cy="52" r="4" fill="${shade(c,-20)}"/>${SMILE(84,58,7)}</g>`,
+  worm:(c='#F48FB1')=>`<g class="cr-inch"><path d="M10 70q12-24 24 0t24 0t24 0" stroke="${c}" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M10 70q12-24 24 0t24 0t24 0" stroke="${shade(c,-15)}" stroke-width="16" stroke-dasharray="2 9" fill="none"/>${EY(80,64,5)}${EY(90,66,4)}${SMILE(86,74,6)}</g>`,
+  snake:(c='#43A047',c2='#FFD54F')=>`<g class="cr-slither"><path d="M12 82C30 96 48 88 46 70S20 48 38 36S78 46 74 28" stroke="${c}" stroke-width="15" fill="none" stroke-linecap="round"/><path d="M12 82C30 96 48 88 46 70S20 48 38 36S78 46 74 28" stroke="${c2}" stroke-width="6" stroke-dasharray="3 12" fill="none" stroke-linecap="round"/>
+   <path class="tongue" d="M88 26h9l4-4M97 26l4 4" stroke="#E53935" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="78" cy="24" rx="15" ry="12" fill="${c}"/>${EY(74,20,5)}${EY(84,20,5)}${SMILE(80,29,7)}</g>`
+};
+const crSVG=(k,...a)=>`<svg class="crit" viewBox="0 0 100 100" aria-hidden="true">${(CR[k]||CR.ladybug)(...a)}</svg>`;
+const CRN={ladybug:'ladybug',bee:'bee',butterfly:'butterfly',ant:'ant',caterpillar:'caterpillar',spider:'spider',beetle:'beetle',dragonfly:'dragonfly',firefly:'firefly',grasshopper:'grasshopper',snail:'snail',worm:'worm',snake:'snake'};
+const CRP={ladybug:'ladybugs',bee:'bees',butterfly:'butterflies',ant:'ants',caterpillar:'caterpillars',spider:'spiders',beetle:'beetles',dragonfly:'dragonflies',firefly:'fireflies',grasshopper:'grasshoppers',snail:'snails',worm:'worms',snake:'snakes'};
+const CRE={ladybug:'🐞',bee:'🐝',butterfly:'🦋',ant:'🐜',caterpillar:'🐛',spider:'🕷️',beetle:'🪲',dragonfly:'🪰',firefly:'✨',grasshopper:'🦗',snail:'🐌',worm:'🪱',snake:'🐍'};
+const FACTS={snake:'Snakes have no legs. They slither, sss!',ladybug:'Ladybugs have black spots on their red back!',bee:'Bees make sweet honey!',butterfly:'A butterfly was a little caterpillar first!',ant:'Ants are very strong. They work as a team!',caterpillar:'Caterpillars eat lots and lots of leaves!',spider:'Spiders have eight legs!',beetle:'Beetles have a hard, shiny shell!',dragonfly:'Dragonflies fly super fast!',firefly:'Fireflies glow in the dark at night!',grasshopper:'Grasshoppers jump very, very high!',snail:'Snails carry their house on their back!',worm:'Worms live under the ground!'};
+
+/* ---------- Sanju the snake: the guide for Bug World ---------- */
+function sanjuSVG(emo='happy'){
+  const mouth=emo==='surprised'?'<ellipse cx="100" cy="122" rx="9" ry="11" fill="#7B1F1F"/>':emo==='sad'?'<path d="M84 128q16-12 32 0" stroke="#1B5E20" stroke-width="4" fill="none" stroke-linecap="round"/>':'<path d="M78 116q22 22 44 0" stroke="#1B5E20" stroke-width="4.5" fill="#7B1F1F" stroke-linecap="round"/>';
+  const pup=emo==='thinking'?-5:0;
+  return `<svg class="chr snake" viewBox="0 0 200 360" aria-hidden="true"><g class="body"><g class="sway">
+   <ellipse cx="100" cy="338" rx="78" ry="18" fill="#000" opacity=".12"/>
+   <ellipse cx="100" cy="318" rx="80" ry="27" fill="#2E7D32"/><ellipse cx="100" cy="296" rx="70" ry="25" fill="#388E3C"/><ellipse cx="100" cy="275" rx="56" ry="21" fill="#43A047"/>
+   <g fill="#FFD54F">${[[45,318],[80,328],[120,328],[155,318],[55,296],[100,302],[145,296],[70,276],[130,276]].map(([x,y])=>`<path d="M${x} ${y-6}l6 6-6 6-6-6z"/>`).join('')}</g>
+   <path d="M128 268C176 222 54 196 100 138" stroke="#43A047" stroke-width="40" fill="none" stroke-linecap="round"/>
+   <path d="M128 268C176 222 54 196 100 138" stroke="#C5E1A5" stroke-width="14" stroke-dasharray="2 16" fill="none" stroke-linecap="round"/>
+   <ellipse cx="100" cy="98" rx="58" ry="46" fill="#4CAF50"/><ellipse cx="100" cy="112" rx="40" ry="26" fill="#81C784"/>
+   <path d="M60 64q40-22 80 0" stroke="#388E3C" stroke-width="6" fill="none" stroke-linecap="round" opacity=".6"/>
+   <circle cx="68" cy="112" r="8" fill="#FF8A80" opacity=".55"/><circle cx="132" cy="112" r="8" fill="#FF8A80" opacity=".55"/>
+   <g class="eye"><circle cx="78" cy="84" r="16" fill="#fff" stroke="#1B5E20" stroke-width="2"/><circle cx="80" cy="${86+pup}" r="9" fill="#1B1F3B"/><circle cx="84" cy="${81+pup}" r="3.5" fill="#fff"/>
+   <circle cx="122" cy="84" r="16" fill="#fff" stroke="#1B5E20" stroke-width="2"/><circle cx="124" cy="${86+pup}" r="9" fill="#1B1F3B"/><circle cx="128" cy="${81+pup}" r="3.5" fill="#fff"/></g>
+   <circle cx="94" cy="104" r="2" fill="#1B5E20"/><circle cx="106" cy="104" r="2" fill="#1B5E20"/>
+   <g class="m-idle">${mouth}<path class="tongue" d="M100 128v14l-6 7M100 142l6 7" stroke="#E53935" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+   <g class="m-talk"><ellipse cx="100" cy="122" rx="15" ry="11" fill="#7B1F1F"/><path d="M100 128v16l-6 7M100 144l6 7" stroke="#E53935" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+   <path d="M146 300q18 -6 22 -22" stroke="#2E7D32" stroke-width="12" fill="none" stroke-linecap="round" class="tail"/>
+  </g></g></svg>`;
+}
+CHARS.sanju={n:'Sanju',g:'m',kid:true,role:'Sanju, a friendly, funny green snake who lives in the bug garden. He knows lots of fun facts about snakes and insects, says "Sssuper!" and hisses playfully, and loves it when children talk to him',v:{pitch:1.25},art:sanjuSVG};
+const _charSVG=charSVG;
+charSVG=function(c,emo,g){return c&&c.art?c.art(emo,g):_charSVG(c,emo,g)};
+
+/* garden backdrop */
+const _backdrop=backdrop;
+backdrop=function(bg){if(bg!=='garden')return _backdrop(bg);
+  const fl=(x,y,c)=>`<g transform="translate(${x} ${y})"><path d="M0 0v30" stroke="#43A047" stroke-width="3"/>${[0,72,144,216,288].map(a=>`<circle cx="${Math.cos(a*Math.PI/180)*7}" cy="${Math.sin(a*Math.PI/180)*7}" r="6" fill="${c}"/>`).join('')}<circle r="5" fill="#FFD54F"/></g>`;
+  return `<svg class="bgd" viewBox="0 0 400 250" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B3E5FC"/><stop offset="1" stop-color="#E1F5FE"/></linearGradient></defs>
+   <rect width="400" height="250" fill="url(#gsky)"/><circle cx="340" cy="40" r="26" fill="#FFE082"/><ellipse cx="90" cy="46" rx="40" ry="12" fill="#fff" opacity=".8"/><ellipse cx="230" cy="30" rx="30" ry="9" fill="#fff" opacity=".7"/>
+   <path d="M0 150q100-30 200 0t200 0v100H0z" fill="#9CCC65"/><path d="M0 180q100-24 200 0t200 0v70H0z" fill="#7CB342"/>
+   ${fl(30,150,'#F48FB1')}${fl(80,165,'#CE93D8')}${fl(330,155,'#FFAB91')}${fl(370,170,'#F48FB1')}${fl(300,175,'#90CAF9')}
+   <path d="M20 250q10-40 0-60M40 250q-8-30 6-50M360 250q10-40 0-60M380 250q-6-30 8-46" stroke="#558B2F" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`};
+
+/* ---------- confetti + praise ---------- */
+function confetti(n=46){const w=document.createElement('div');w.className='confetti';const cols=['#FF7A59','#FFC53D','#19B5A5','#7C5CFF','#43A047','#EC407A'];
+  for(let i=0;i<n;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=cols[i%cols.length];p.style.animationDelay=Math.random()*.6+'s';p.style.setProperty('--r',(Math.random()*720-360)+'deg');p.style.setProperty('--x',(Math.random()*120-60)+'px');w.appendChild(p)}
+  document.body.appendChild(w);setTimeout(()=>w.remove(),3200)}
+const PRAISE9=['Sssuper!','Hiss-tastic!','Wow, you are a bug expert!','Amazing focus!','You did it all by yourself!','Fantastic listening!','Brilliant! Sanju is so proud!','High five!'];
+
+/* ---------- Bug Jar: a creature every 5 stars ---------- */
+const JAR=[['ladybug','Red Ladybug',[]],['bee','Busy Bee',[]],['butterfly','Blue Butterfly',['#42A5F5','#FFD54F']],['snake','Green Snake',['#43A047','#FFD54F']],['caterpillar','Hungry Caterpillar',['#7CB342']],['ant','Strong Ant',[]],
+  ['beetle','Shiny Beetle',['#1E88E5']],['firefly','Glowing Firefly',[]],['dragonfly','Fast Dragonfly',['#26C6DA']],['snail','Slow Snail',['#FFB74D']],['grasshopper','Jumping Grasshopper',['#8BC34A']],['spider','Friendly Spider',['#7E57C2']],
+  ['butterfly','Pink Butterfly',['#F06292','#CE93D8']],['snake','Rainbow Snake',['#7E57C2','#FFEB3B']],['ladybug','Yellow Ladybug',['#FDD835']],['beetle','Golden Beetle',['#FFB300']],['worm','Wiggly Worm',['#F48FB1']],['snake','King Cobra',['#FB8C00','#263238']],
+  ['butterfly','Monarch Butterfly',['#FB8C00','#263238']],['snake','Golden Python',['#FFC107','#795548']]];
+const JAR_STEP=5;
+const jarCount=()=>Math.min(JAR.length,Math.floor(totalStars()/JAR_STEP));
+const jarArt=j=>crSVG(j[0],...j[2]);
+function jarReveal(){
+  PROG.jarSeen=PROG.jarSeen||0;const n=jarCount();if(n<=PROG.jarSeen)return false;
+  const j=JAR[n-1];PROG.jarSeen=n;Store.prog();
+  const ov=document.createElement('div');ov.className='reveal';
+  ov.innerHTML=`<div class="rv-card"><div class="rv-rays"></div><div class="rv-art">${jarArt(j)}</div><h2>You found a<br>${esc(j[1])}!</h2><p>${esc(FACTS[j[0]]||'')}</p><button class="cta big" id="rvok">🫙 Put in my Bug Jar</button></div>`;
+  document.body.appendChild(ov);confetti(60);cue('yay');buzz(60);
+  say(`Wow! You found a ${j[1]}! ${FACTS[j[0]]||''}`,NARR);
+  ov.querySelector('#rvok').onclick=()=>{ov.classList.add('out');setTimeout(()=>ov.remove(),300)};
+  return true;
+}
+SCREENS.bugjar=()=>{
+  const n=jarCount(),st=totalStars();
+  app().innerHTML=`${topBar('🫙 My Bug Jar')}
+   <section class="jarhead"><div class="jarbig">${n?jarArt(JAR[n-1]):crSVG('ladybug')}</div><div><h2>${n} / ${JAR.length}</h2><p>${n<JAR.length?`${JAR_STEP-st%JAR_STEP} more ⭐ for a new friend!`:'You found them all!'}</p><div class="bar"><i style="width:${(st%JAR_STEP)/JAR_STEP*100}%"></i></div></div></section>
+   <div class="jargrid">${JAR.map((j,i)=>i<n?`<button class="jarit" data-i="${i}">${jarArt(j)}<small>${esc(j[1])}</small></button>`:`<div class="jarit lock">${jarArt(j)}<small>?</small></div>`).join('')}</div>`;
+  app().querySelectorAll('.jarit[data-i]').forEach(b=>b.onclick=()=>{const j=JAR[+b.dataset.i];b.classList.remove('hop');void b.offsetWidth;b.classList.add('hop');sfx('pop');say(`${j[1]}! ${FACTS[j[0]]||''}`,{...CHARS.sanju.v,g:'m'})});
+  say(n?`You have ${n} friends in your bug jar! Touch one!`:'Play games and get stars. Then you will find bugs!',NARR);
+};
+
+/* ---------- Bug World hub ---------- */
+const BUGGAMES=[['bugtalk','💬','Talk with Sanju','#C8F7DC','talk'],['snakefeed','🐍','Feed Sanju','#D9F5C5','focus'],['bughunt','🍃','Bug Hunt','#FFF1C1','find + count'],['snakesays','👂','Sanju Says','#E3DEFF','listen + wait'],['caterpillar','🐛','Hungry Caterpillar','#FFE0D1','count'],['bugtrain','🚂','Bug Train','#D6ECFF','patterns'],['bugjar','🫙','My Bug Jar','#FBE3F1','collection']];
+SCREENS.bugworld=()=>{
+  app().innerHTML=`${topBar('🐍 Bug World')}
+   <section class="bwhero">${backdrop('garden')}<div class="bw-sanju">${sanjuSVG('happy')}</div>
+    <div class="bw-bub">Hi ${esc(kidName())}! Let us play!</div>
+    <span class="bw-fly b1">${crSVG('butterfly','#F06292','#FFD54F')}</span><span class="bw-fly b2">${crSVG('bee')}</span><span class="bw-walk w1">${crSVG('ladybug')}</span><span class="bw-walk w2">${crSVG('ant')}</span></section>
+   <div class="bwgrid">${BUGGAMES.map(([k,e,n,c,s],i)=>`<button class="bwtile${i===0?' wide':''}" style="--bc:${c}" data-g="${k}"><span class="bwe">${k==='bugtalk'?sanjuSVG('happy'):k==='bugjar'?`<b class="jarn">${jarCount()}</b>🫙`:({snakefeed:crSVG('snake'),bughunt:crSVG('ladybug'),snakesays:crSVG('bee'),caterpillar:crSVG('caterpillar','#7CB342',5)})[k]||e}</span><span class="bwt"><b>${n}</b><small>${s}</small></span></button>`).join('')}</div>`;
+  app().querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go(b.dataset.g));
+  const c=$('.bw-sanju .chr');c&&c.classList.add('talking');say(`Hello ${kidName()}! Welcome to Bug World! What shall we play?`,{...CHARS.sanju.v,g:'m'}).then(()=>{const c2=$('.bw-sanju .chr');c2&&c2.classList.remove('talking')});
+};
+
+/* ---------- Talk with Sanju (AI, or a scripted bug chat) ---------- */
+PLACE_DATA.bugs={n:'Bug Garden',e:'🐍',bg:'garden',char:'sanju',col:'#43A047',
+  real:['Park mein ek keeda dhoondh kar uska naam bolna','Picture book mein saanp dikhakar "snake" bolna','Ek bug fact Mummy ko sunana'],
+  steps:[{t:'say',line:'Hisss! Hello {name}! I am Sanju the snake. Say: Hello Sanju!',expect:['hello','hi','sanju','namaste'],model:'Hello Sanju!',ok:'Sssuper! Hello my friend!',gesture:'wave',huh:'Say: Hello Sanju!',opts:[['👋','Hello Sanju!',1],['😶','(says nothing)',0]]},
+   {t:'choose',line:'Which bug do you like? Ladybug, bee or butterfly?',objs:[['🐞','ladybug','lady bug','lady'],['🐝','bee','bumble'],['🦋','butterfly','titli']],react:'{Item}! I love the {item} too!',model:'I like the {item}.'},
+   {t:'say',line:'Snakes have no legs! Can you say: snakes have no legs?',expect:['no legs','legs','snake','snakes'],model:'Snakes have no legs!',ok:'Yes! We slither! Ssss!',gesture:'clap',opts:[['🐍','Snakes have no legs!',1],['😶','(says nothing)',0]]},
+   {t:'say',line:'An ant has six legs! How many legs? Say: six!',expect:['six','6','che','chhe','chah'],model:'Six legs!',ok:'Right! Insects have six legs!',gesture:'clap',opts:[['6️⃣','Six legs!',1],['😶','(says nothing)',0]]},
+   {t:'say',line:'A spider has eight legs! Say: eight!',expect:['eight','8','aath','ate'],model:'Eight legs!',ok:'Wow! You are a bug expert!',gesture:'clap',opts:[['8️⃣','Eight legs!',1],['😶','(says nothing)',0]]},
+   {t:'say',line:'I have to go and sleep under a leaf. Say: bye Sanju!',expect:['bye','tata','see you','good night'],model:'Bye Sanju!',ok:'Bye bye! Ssss! Come back soon!',gesture:'wave',opts:[['👋','Bye Sanju!',1],['😶','(says nothing)',0]]}]};
+AI_PLACES.bugs={goals:['Say hello to Sanju the snake','Tell Sanju his favourite snake or insect','Learn one fun fact about snakes or insects and say it back','Count legs or spots together (insects have 6 legs, spiders 8)','Ask Sanju a question about bugs or snakes','Say bye to Sanju'],scene:'a sunny garden full of insects, flowers and leaves; you are a cartoon snake, so you can show bugs and tell funny snake facts'};
+SCREENS.bugtalk=()=>go('scene','bugs');
+const _scene9=SCREENS.scene;
+SCREENS.scene=k=>{_scene9(k);if(k==='bugs'){const b=app().querySelector('header .back');if(b)b.setAttribute('onclick',"go('bugworld')")}};
+
+/* ---------- AI: visual supports + interest hooks ---------- */
+const _aiSystem=aiSystem;
+aiSystem=function(k){return _aiSystem(k)
+  .replace('GOALS for this visit','MOTIVATION AND VISUALS\n- He LOVES snakes and insects (ladybugs, bees, butterflies, ants, spiders, caterpillars). Use them as hooks: a quick bug fact, "Sanju the snake is watching you!", a bug sticker as a reward, counting bug legs.\n- He learns best from pictures. In "show" give 1-3 emojis for the key words of what you say (e.g. ["🍌","🍎"]). When you offer a choice, put each option in "choices" with an emoji.\n- Celebrate every try with energy. Short and lively.\n\nGOALS for this visit')
+  .replace('"model":"a short sentence for him to copy, or empty",','"model":"a short sentence for him to copy, or empty","show":["1-3 emojis for your key words"],"choices":[{"e":"emoji","t":"word"}],')};
+const _povHTML=povHTML;
+povHTML=function(){let h=_povHTML();if(SC&&SC.show&&SC.show.length)h=h.replace(/<\/div>$/,`<div class="pov-show">${SC.show.map((e,i)=>`<span style="animation-delay:${i*.12}s">${esc(e)}</span>`).join('')}</div></div>`);return h};
+const _aiTray=aiTray;
+aiTray=function(){let h=_aiTray();if(SC&&SC.phase==='say'&&SC.choices&&SC.choices.length){h=`<div class="pics choice9">${SC.choices.map((c,i)=>`<button class="pic" data-ch="${i}"><span>${esc(c.e||'❓')}</span><small>${esc(c.t||'')}</small></button>`).join('')}</div>`+h}return h};
+const _bindTray9=bindTray6;
+bindTray6=function(){_bindTray9();app().querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{const c=SC.choices[+b.dataset.ch];if(c&&SC.resolve){b.classList.add('picked');SC.resolve({type:'speech',text:c.t,alts:[c.t],pointed:true})}})};
+const _aiAct=aiAct;
+aiAct=async function(id,r){SC.show=Array.isArray(r.show)?r.show.map(String).filter(Boolean).slice(0,3):[];SC.choices=Array.isArray(r.choices)?r.choices.filter(c=>c&&c.t).slice(0,3):[];return _aiAct(id,r)};
+
+/* ---------- celebration with Sanju + confetti + Bug Jar ---------- */
+celebrate=function(stars,msg,again){
+  const back=BUGGAMES.some(g=>g[0]===again)?'bugworld':'home';
+  app().innerHTML=`<section class="win win9"><div class="w9-sanju">${sanjuSVG('happy')}</div><div class="bigstars">${'⭐'.repeat(stars)}</div><h1>${esc(msg)}</h1><p class="w9-praise">${esc(pick(PRAISE9))}</p>
+   <div class="w9-jar"><span>🫙 ${jarCount()} / ${JAR.length}</span><div class="bar"><i style="width:${(totalStars()%JAR_STEP)/JAR_STEP*100}%"></i></div><small>${JAR_STEP-totalStars()%JAR_STEP} ⭐ to the next bug friend</small></div>
+   <div class="row2"><button class="cta" onclick="go('${again}')">🔁 Again</button><button class="cta soft" onclick="go('${back}')">${back==='home'?'🏠 Home':'🐍 Bug World'}</button></div></section>`;
+  confetti();cue('yay');const c=$('.w9-sanju .chr');c&&c.classList.add('talking');
+  say(msg+' '+pick(PRAISE9),{...CHARS.sanju.v,g:'m'}).then(()=>{const c2=$('.w9-sanju .chr');c2&&c2.classList.remove('talking');setTimeout(jarReveal,300)});
+};
+
+/* ---------- home: Bug World hero + Bug Jar shelf ---------- */
+const _home9=SCREENS.home;
+SCREENS.home=()=>{_home9();
+  const duo=app().querySelector('.duo');
+  if(duo)duo.insertAdjacentHTML('beforebegin',`<button class="bwhome" onclick="go('bugworld')">${backdrop('garden')}<span class="bwh-s">${sanjuSVG('happy')}</span><span class="bw-fly b1">${crSVG('butterfly','#F06292','#FFD54F')}</span><span class="bw-walk w1">${crSVG('ladybug')}</span><span class="bwh-t"><b>Bug World</b><small>Snakes & insects games</small></span><span class="bwh-go">▶</span></button>`);
+  const sh=app().querySelector('.shelf');const n=jarCount(),st=totalStars();
+  if(sh)sh.outerHTML=`<button class="shelf jarshelf" onclick="go('bugjar')"><div class="spread"><h3>🫙 My Bug Jar</h3><span class="muted small">${JAR_STEP-st%JAR_STEP} ⭐ to the next bug</span></div><div class="bar"><i style="width:${(st%JAR_STEP)/JAR_STEP*100}%"></i></div><div class="jarrow">${JAR.slice(0,Math.max(6,n+2)).map((j,i)=>`<span class="${i<n?'':'lock'}">${jarArt(j)}</span>`).join('')}</div></button>`;
+  setTimeout(()=>{if(current==='home')jarReveal()},900);
+};
+GAMES.unshift(['snakefeed','🐍','Feed Sanju','#D9F5C5'],['bughunt','🍃','Bug Hunt','#FFF1C1'],['snakesays','👂','Sanju Says','#E3DEFF'],['caterpillar','🐛','Hungry Caterpillar','#FFE0D1'],['bugtrain','🚂','Bug Train','#D6ECFF']);
+
+/* ---------- smooth screen changes ---------- */
+const _go9=go;
+go=function(s,...a){_go9(s,...a);const el=$('#app');if(el){el.classList.remove('scr-in');void el.offsetWidth;el.classList.add('scr-in')}};
+
+/* =========================================================
+   GAMES
+   ========================================================= */
+const say9=t=>say(t,{...CHARS.sanju.v,g:'m'});
+const wantChip=(G,html,label)=>{let w=G.ar.querySelector('.gwant');if(!w){w=document.createElement('div');w.className='gwant';G.ar.appendChild(w)}w.innerHTML=`${html}<b>${esc(label)}</b>`;w.classList.remove('pulse');void w.offsetWidth;w.classList.add('pulse')};
+function snakeBody(n){const seg=24,w=60+n*seg;let s='';
+  for(let i=0;i<n;i++){const x=24+i*seg,y=40+Math.sin(i*.9)*9;s+=`<circle cx="${x}" cy="${y}" r="17" fill="${i%2?'#43A047':'#4CAF50'}"/><path d="M${x} ${y-7}l5 5-5 5-5-5z" fill="#FFD54F"/>`}
+  const hx=24+n*seg+6,hy=40+Math.sin(n*.9)*9;
+  return `<svg viewBox="0 0 ${w+40} 84" height="84" aria-hidden="true">${s}<g class="snkhead"><ellipse cx="${hx}" cy="${hy}" rx="26" ry="22" fill="#4CAF50"/>${EY(hx-4,hy-8,7)}${EY(hx+12,hy-8,7)}<path class="jaw" d="M${hx-4} ${hy+6}q10 12 22 0" stroke="#1B5E20" stroke-width="3" fill="#7B1F1F"/><path class="tongue" d="M${hx+24} ${hy+4}h10l4-4M${hx+34} ${hy+4}l4 4" stroke="#E53935" stroke-width="3" fill="none" stroke-linecap="round"/></g></svg>`}
+
+/* 1. FEED SANJU — selective attention: tap only the bug Sanju asks for */
+SCREENS.snakefeed=async()=>{
+  const G=gameKit('snakefeed','🐍 Feed Sanju','sanju','bugbg'),lv=gState('snakefeed').lv,ar=G.ar,need=6+lv*2;
+  let fed=0,want=null,list=[],spawnT=0;
+  ar.innerHTML=`<div class="snk" id="snk">${snakeBody(3)}</div>`;
+  const pool=lv===1?['ladybug','bee','butterfly']:lv===2?['ladybug','bee','butterfly','ant','spider']:['ladybug','bee','butterfly','ant','spider','beetle','caterpillar'];
+  const newWant=async()=>{want=pick(pool);wantChip(G,crSVG(want),CRN[want]);await G.say(pick([`I am hungry! Give me a ${CRN[want]}!`,`Sanju wants a ${CRN[want]}!`,`Find the ${CRN[want]} for me!`]))};
+  await G.say(`Hisss! I am Sanju. Feed me only the bug I ask for!`);if(!G.alive())return;
+  await newWant();
+  const spawn=()=>{const W=ar.clientWidth,H=ar.clientHeight;const has=list.some(b=>b.t===want);const t=!has||Math.random()<.4?want:pick(pool.filter(x=>x!==want));
+    const dir=Math.random()<.5?1:-1,el=document.createElement('button');el.className='gbug';el.innerHTML=crSVG(t);el.setAttribute('aria-label',CRN[t]);ar.appendChild(el);
+    const b={el,t,x:dir>0?-80:W+10,y:20+Math.random()*Math.max(40,H-200),vx:dir*(45+lv*16)*gSpeed()*(0.8+Math.random()*.4),ph:Math.random()*6,dir};list.push(b);
+    tapOn(el,()=>tap(b))};
+  const tap=async b=>{if(G.paused||b.gone||!want)return;
+    if(b.t===want){b.gone=true;list=list.filter(x=>x!==b);const s=$('#snk'),hr=s.querySelector('.snkhead').getBoundingClientRect(),ar0=ar.getBoundingClientRect();
+      b.el.style.transition='transform .45s ease-in, opacity .45s';b.el.style.transform=`translate(${hr.left-ar0.left+hr.width/2-37}px,${hr.top-ar0.top+hr.height/2-37}px) scale(.3)`;b.el.style.opacity='0';
+      s.classList.add('chomp');setTimeout(()=>{b.el.remove();s.classList.remove('chomp')},460);
+      fed++;G.progress(fed/need);G.good(b.el,pick(['Yum yum!','Sssuper!','Tasty!','Thank you!']));
+      setTimeout(()=>{if(G.alive())$('#snk').innerHTML=snakeBody(3+fed)},470);
+      if(fed>=need){want=null;await sleep(700);G.finish(`Sanju is full! You fed him ${need} bugs!`);return}
+      want=null;await sleep(600);if(G.alive())await newWant()}
+    else{const right=list.find(x=>x.t===want);await G.stop(`That is a ${CRN[b.t]}. Sanju wants a ${CRN[want]}.`,{wrong:b.el,right:right&&right.el})}};
+  G.loop(dt=>{spawnT-=dt;const W=ar.clientWidth;if(spawnT<=0&&list.length<3+lv){spawn();spawnT=(1.6-lv*.2)/gSpeed()}
+    list.forEach(b=>{b.x+=b.vx*dt;b.ph+=dt*3;const y=b.y+Math.sin(b.ph)*12;b.el.style.transform=`translate(${b.x}px,${y}px) scaleX(${b.dir>0?1:-1})`;if(b.x<-100||b.x>W+100){b.gone=true;b.el.remove()}});
+    list=list.filter(b=>!b.gone)});
+};
+
+/* 2. BUG HUNT — look under leaves, find all, then count */
+const NUMW={1:['one','1','ek','won'],2:['two','2','do','to','too'],3:['three','3','teen','tree','tin'],4:['four','4','char','chaar','for'],5:['five','5','paanch','panch'],6:['six','6','chhe','che']};
+SCREENS.bughunt=async()=>{
+  const G=gameKit('bughunt','🍃 Bug Hunt','sanju','bugbg leafy'),lv=gState('bughunt').lv,ar=G.ar,R=3;
+  await G.say('Bugs are hiding under the leaves! Let us find them!');
+  for(let r=0;r<R&&G.alive();r++){
+    const cells=lv===1?9:12,k=Math.min(5,2+((lv+r)>>1)),t=pick(['ladybug','bee','butterfly','caterpillar','ant','spider','snail']);
+    const others=['ladybug','bee','butterfly','caterpillar','ant','spider','snail','beetle'].filter(x=>x!==t);
+    const fill=shuffle([...Array(k).fill(t),...Array(Math.floor((cells-k)*.6)).map(()=>pick(others)),...Array(cells).fill(null)].slice(0,cells));
+    ar.innerHTML=`<div class="leafgrid g${cells}">${fill.map((c,i)=>`<button class="lf" data-i="${i}"><span class="lf-bug">${c?crSVG(c):''}</span><span class="lf-leaf"><svg viewBox="0 0 100 100"><path d="M50 4C14 26 10 70 50 96C90 70 86 26 50 4z" fill="#66BB6A"/><path d="M50 10V92M50 40l-18-12M50 56l-22-12M50 40l18-12M50 56l22-12" stroke="#2E7D32" stroke-width="3" fill="none"/></svg></span></button>`).join('')}</div>`;
+    wantChip(G,crSVG(t),`Find ${k}`);
+    await G.say(`Find all the ${CRP[t]}! There are ${k}.`);if(!G.alive())return;
+    let found=0;const foundEls=[];
+    await new Promise(res=>{ar.querySelectorAll('.lf').forEach(b=>tapOn(b,()=>{if(G.paused||b.classList.contains('open'))return;const c=fill[+b.dataset.i];b.classList.add('open');sfx('lift');
+      if(c===t){found++;foundEls.push(b);b.classList.add('got');G.good(b,found===k?'You found them all!':pick(['Found one!','Yes!','Good looking!']));G.progress((r+found/k)/R);if(found===k)setTimeout(res,700)}
+      else{say(c?`A ${CRN[c]}!`:'Nothing here!',NARR);setTimeout(()=>b.classList.remove('open'),1100)}}))});
+    if(!G.alive())return;
+    /* counting question: tap or say */
+    const opts=shuffle([k,k+1,Math.max(1,k-1)].filter((v,i,s)=>s.indexOf(v)===i));
+    const q=document.createElement('div');q.className='numq';q.innerHTML=`<b>How many ${CRP[t]}?</b><div>${opts.map(o=>`<button class="numb" data-o="${o}">${o}</button>`).join('')}</div>`;ar.appendChild(q);
+    await G.say(`How many ${CRP[t]} did you find?`);if(!G.alive())return;
+    let ok=false;
+    while(!ok&&G.alive()){
+      const ans=await new Promise(res=>{let done=false;const fin=v=>{if(!done){done=true;stopRec();res(v)}};q.querySelectorAll('.numb').forEach(b=>tapOn(b,()=>fin(+b.dataset.o)));
+        if(SR&&micOK())startRec(null,f=>{if(!f)return;const h={text:f.text,alts:f.alts};const n=Object.keys(NUMW).find(n=>anyKey(h,NUMW[n]));if(n)fin(+n)},8000)});
+      if(!G.alive())return;
+      if(ans===k){ok=true;const b=q.querySelector(`[data-o="${k}"]`);b&&b.classList.add('ok');G.good(b,`Yes! ${k} ${CRP[t]}!`);await sleep(900)}
+      else{const b=q.querySelector(`[data-o="${ans}"]`);await G.stop(`Let us count together.`,{wrong:b});
+        for(let i=0;i<foundEls.length&&G.alive();i++){foundEls[i].classList.add('count');foundEls[i].dataset.n=i+1;await say(String(i+1),NARR);await sleep(200)}
+        await G.say(`${k}! Now touch ${k}.`)}}
+  }
+  if(G.alive())G.finish('Super bug hunter! You found every bug!');
+};
+
+/* 3. SANJU SAYS — listen and wait (impulse control) */
+SCREENS.snakesays=async()=>{
+  const G=gameKit('snakesays','👂 Sanju Says','sanju','bugbg'),lv=gState('snakesays').lv,ar=G.ar,N=8+lv*2;
+  const set=shuffle(['ladybug','bee','butterfly','spider','caterpillar','ant','snail','beetle']).slice(0,4);
+  ar.innerHTML=`<div class="ssgrid">${set.map(t=>`<button class="ssb" data-t="${t}">${crSVG(t)}<small>${CRN[t]}</small></button>`).join('')}</div>`;
+  let cur=null;
+  ar.querySelectorAll('.ssb').forEach(b=>tapOn(b,()=>{if(!cur||cur.done||G.paused)return;cur.done=true;const t=b.dataset.t;cur.res(!cur.says?['wrongtap',b]:t===cur.target?['ok',b]:['wrong',b])}));
+  await G.say('Listen carefully! Touch a bug ONLY when I say: Sanju says!');if(!G.alive())return;
+  for(let i=0;i<N&&G.alive();i++){
+    const target=pick(set),says=i<2||Math.random()<(lv===1?.72:lv===2?.62:.55);let resolveR;const pr=new Promise(r=>resolveR=r);
+    const c=cur={says,target,done:false,res:v=>resolveR(v)};wantChip(G,'<span class="ear9">👂</span>',says?'Sanju says…':'…');
+    await G.say(says?`Sanju says: touch the ${CRN[target]}!`:`Touch the ${CRN[target]}!`);if(!G.alive())return;
+    if(!c.done){const tm=setTimeout(()=>{if(!c.done){c.done=true;resolveR(['timeout'])}},says?(5200/gSpeed()):3200);TIMERS.push(tm)}
+    const [k,b]=await pr;if(!G.alive())return;
+    const btn=ar.querySelector(`[data-t="${target}"]`);
+    if(k==='ok'){b.classList.remove('hop');void b.offsetWidth;b.classList.add('hop');G.good(b,pick(['Yes! Sanju said it!','Good listening!','Sssuper!']))}
+    else if(k==='wrong')await G.stop(`That is the ${CRN[b.dataset.t]}. Sanju said the ${CRN[target]}.`,{wrong:b,right:btn});
+    else if(k==='wrongtap')await G.stop(`I did not say "Sanju says"! Wait for it.`,{wrong:b});
+    else if(!says)G.good(null,pick(['You waited! Super listening!','Great waiting!','You did not touch! Smart!']));
+    else{G.fb('Too slow! Next one.');await say('Quick next time!',NARR)}
+    G.progress((i+1)/N);await sleep(500);
+  }
+  if(G.alive())G.finish('Wow! You listened so well!');
+};
+
+/* 4. HUNGRY CATERPILLAR — count exactly, stop yourself, then the butterfly! */
+SCREENS.caterpillar=async()=>{
+  const G=gameKit('caterpillar','🐛 Hungry Caterpillar','sanju','bugbg'),lv=gState('caterpillar').lv,ar=G.ar,R=3+lv;
+  let segs=3;const leafSVG='<svg viewBox="0 0 100 100"><path d="M50 4C14 26 10 70 50 96C90 70 86 26 50 4z" fill="#7CB342"/><path d="M50 10V92" stroke="#33691E" stroke-width="4"/></svg>';
+  ar.innerHTML=`<div class="branch"></div><div class="cat" id="cat">${crSVG('caterpillar','#7CB342',segs)}</div><div class="cnum" id="cnum"></div><div class="leafrow">${Array.from({length:6},(_,i)=>`<button class="leafb" data-i="${i}">${leafSVG}</button>`).join('')}</div>`;
+  await G.say('This caterpillar is very hungry! Give it the right number of leaves.');if(!G.alive())return;
+  let state='wait',n=0,cnt=0,timer=null;
+  const leafTap=async b=>{if(G.paused||b.classList.contains('used'))return;
+    if(state==='feeding'){cnt++;b.classList.add('used');const c=$('#cat').getBoundingClientRect(),a=b.getBoundingClientRect();b.style.transform=`translate(${c.left+c.width*.8-a.left-a.width/2}px,${c.top+c.height/2-a.top-a.height/2}px) scale(.3)`;
+      setTimeout(()=>{b.classList.remove('used');b.style.transform='';b.classList.add('grow');setTimeout(()=>b.classList.remove('grow'),400)},700);
+      segs=Math.min(9,segs+1);setTimeout(()=>{if(G.alive())$('#cat').innerHTML=crSVG('caterpillar','#7CB342',segs)},350);sfx('pop');
+      $('#cnum').innerHTML=`<b>${n}</b><span>${Array.from({length:n},(_,i)=>`<i class="${i<cnt?'on':''}"></i>`).join('')}</span>`;say(String(cnt),NARR);
+      if(cnt===n){state='check';timer=setTimeout(()=>{if(state==='check'){state='done';next&&next('ok')}},1700)}}
+    else if(state==='check'){state='done';clearTimeout(timer);next&&next('over',b)}};
+  let next=null;
+  ar.querySelectorAll('.leafb').forEach(b=>tapOn(b,()=>leafTap(b)));
+  for(let r=0;r<R&&G.alive();r++){
+    n=1+Math.floor(Math.random()*Math.min(5,2+lv));cnt=0;
+    $('#cnum').innerHTML=`<b>${n}</b><span>${Array.from({length:n},()=>'<i></i>').join('')}</span>`;
+    await G.say(n===1?'Give me one leaf!':`Give me ${n} leaves!`);if(!G.alive())return;
+    state='feeding';
+    const res=await new Promise(r=>next=r);next=null;if(!G.alive())return;
+    if(res==='ok')G.good($('#cat'),`Yum! ${n} ${n>1?'leaves':'leaf'}! Thank you!`);
+    else await G.stop(`I wanted only ${n}! Count and then stop.`,{});
+    G.progress((r+1)/R);await sleep(800);
+  }
+  if(!G.alive())return;
+  /* metamorphosis reward */
+  ar.innerHTML=`<div class="meta"><div class="m1">${crSVG('caterpillar','#7CB342',7)}</div><div class="m2"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="56" rx="20" ry="34" fill="#A1887F"/><path d="M34 40q16 8 32 0M32 56q18 8 36 0M34 72q16 8 32 0" stroke="#6D4C41" stroke-width="3" fill="none"/><path d="M50 22V6" stroke="#6D4C41" stroke-width="4"/></svg></div><div class="m3">${crSVG('butterfly','#F06292','#FFD54F')}</div></div>`;
+  await G.say('The caterpillar ate so much! Now it sleeps in a cocoon…');await sleep(1600);if(!G.alive())return;
+  confetti(40);await G.say('Look! It became a beautiful butterfly!');
+  G.finish('You fed the caterpillar and it became a butterfly!');
+};
+
+/* 5. BUG TRAIN — what comes next? (patterns, sequencing) */
+SCREENS.bugtrain=async()=>{
+  const G=gameKit('bugtrain','🚂 Bug Train','sanju','bugbg'),lv=gState('bugtrain').lv,ar=G.ar,R=6;
+  await G.say('The bugs are riding a train! Who comes next?');if(!G.alive())return;
+  for(let r=0;r<R&&G.alive();r++){
+    const ty=shuffle(['ladybug','bee','butterfly','ant','spider','caterpillar','snail']);
+    const unit=lv===1||r<2?[ty[0],ty[1]]:lv===2?pick([[ty[0],ty[0],ty[1]],[ty[0],ty[1],ty[1]]]):[ty[0],ty[1],ty[2]];
+    const len=unit.length===2?6:7,seq=Array.from({length:len},(_,i)=>unit[i%unit.length]),ans=seq[len-1];
+    const ch=shuffle([ans,...shuffle(unit.filter(x=>x!==ans)).slice(0,1),ty[3]]).slice(0,3);
+    ar.innerHTML=`<div class="train"><div class="engine">🚂</div>${seq.map((t,i)=>`<div class="wagon${i===len-1?' q':''}">${i===len-1?'<b>?</b>':crSVG(t)}</div>`).join('')}</div><div class="tchoices">${ch.map(t=>`<button class="tch" data-t="${t}">${crSVG(t)}<small>${CRN[t]}</small></button>`).join('')}</div>`;
+    const tr=ar.querySelector('.train');tr.scrollLeft=9999;
+    await G.say(`${seq.slice(0,len-1).map(t=>CRN[t]).join(', ')}… Who comes next?`);if(!G.alive())return;
+    let ok=false;
+    while(!ok&&G.alive()){
+      const b=await new Promise(res=>ar.querySelectorAll('.tch').forEach(x=>tapOn(x,()=>{if(!G.paused)res(x)})));
+      if(!G.alive())return;
+      if(b.dataset.t===ans){ok=true;const q=ar.querySelector('.wagon.q');q.classList.remove('q');q.innerHTML=crSVG(ans);q.classList.add('fill');sfx('ting');G.good(b,'Yes! Choo choo!');
+        tr.classList.add('go');await say(seq.map(t=>CRN[t]).join(', ')+'!',NARR);await sleep(500)}
+      else await G.stop(`Look again: ${unit.map(t=>CRN[t]).join(', ')}, ${unit.map(t=>CRN[t]).join(', ')}…`,{wrong:b,right:ar.querySelector(`.tch[data-t="${ans}"]`)});
+    }
+    G.progress((r+1)/R);
+  }
+  if(G.alive())G.finish('All aboard! You know every pattern!');
+};
 
 /* ================= PARENT AREA ================= */
 const ACTN={room:'🪄 Magic Room',scene:'🏙️ Shehar',story:'📖 Kahani',chat:'💬 Aarav',report:'📋 Report card',gonogo:'🎈 Laal Gubbare',fish:'🐟 Machhli',simon:'🧠 Yaad Karo',pairs:'🃏 Jodi',follow:'👂 Suno aur Karo',odd:'🔍 Kaun Alag',count:'🔢 Gino'};
