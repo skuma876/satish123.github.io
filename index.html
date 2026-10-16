@@ -1947,8 +1947,15 @@ const AIERR={last:''};
 function withTimeout(ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return {signal:c.signal,done:()=>clearTimeout(t)}}
 
 /* --- Gemini: find the best free "flash" model this key can use --- */
+async function gfetch(url,key,opt={}){
+  const useHdr=PROFILE.gHdr===true;
+  const go1=h=>fetch(h?url:url+(url.includes('?')?'&':'?')+'key='+encodeURIComponent(key),{...opt,headers:{...(opt.headers||{}),...(h?{'x-goog-api-key':key}:{})}});
+  let r=await go1(useHdr);
+  if((r.status===401||r.status===403)&&PROFILE.gHdr===undefined){const r2=await go1(!useHdr);if(r2.ok){PROFILE.gHdr=!useHdr;cacheLocal()}return r2}
+  return r;
+}
 async function gemModels(key){
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=${encodeURIComponent(key)}`);
+  const r=await gfetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',key);
   if(!r.ok)throw new Error('key '+r.status);
   const j=await r.json();
   const ok=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
@@ -1964,11 +1971,11 @@ async function gemCall(system,msgs,o){
   let lastErr='';
   for(const m of list.slice(0,4)){
     for(const think of PROFILE.aiNoThink===false?[false]:[true,false]){
-      const body={systemInstruction:{parts:[{text:system}]},contents:msgs.map(x=>({role:x.role==='assistant'?'model':'user',parts:[{text:x.content}]})),
+      const body={systemInstruction:{parts:[{text:system}]},contents:msgs.map(x=>({role:x.role==='assistant'?'model':'user',parts:x.audio?[{text:x.content},{inlineData:{mimeType:'audio/wav',data:x.audio}}]:[{text:x.content}]})),
         generationConfig:{temperature:.85,maxOutputTokens:o.max||600,...(o.json?{responseMimeType:'application/json'}:{}),...(think?{thinkingConfig:{thinkingBudget:0}}:{})}};
-      const T=withTimeout(o.timeout||15000);
+      const T=withTimeout(o.timeout||(msgs.some(x=>x.audio)?25000:15000));
       try{
-        const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:T.signal});T.done();
+        const r=await gfetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,key,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:T.signal});T.done();
         if(r.status===400&&think){lastErr='400';continue}
         if(!r.ok){lastErr=m+' '+r.status;if(r.status===400||r.status===401||r.status===403)throw new Error(lastErr);break}
         const j=await r.json();const t=((((j.candidates||[])[0]||{}).content||{}).parts||[]).map(p=>p.text||'').join('');
@@ -2044,8 +2051,13 @@ The child: ${kidName()}, a ${PROFILE.age||'6'}-year-old Indian boy in UKG. Signs
 
 YOUR JOB: a real, warm, back-and-forth conversation that keeps him engaged and motivated, and gently builds talking, listening, turn-taking and social skills.
 
+LANGUAGE
+- He may speak English, Hindi, Hinglish or any other language, or mix them, or say words unclearly. Understand him whatever language he uses.
+- ${PROFILE.replyLang==='mix'?'Reply in simple Hinglish: easy English mixed with common Hindi words, written in Roman letters (no Devanagari).':'Reply in very simple English. If he spoke Hindi or another language, you may repeat one key word of his in Roman letters to show you understood, then say it in English ("Kela? Banana! Yummy!"). Never write Devanagari or other scripts.'}
+- When you get his voice as audio, write in "heard" exactly what he said, in Roman letters (e.g. "mujhe chocolate chahiye"). If the audio has no clear child speech, set heard to "" and treat it as silence.
+
 HOW TO TALK
-- Very simple spoken English with an Indian flavour (you may use "beta", "achha", "wah" now and then). 1-2 short sentences, at most 20 words in total. Easy words only. No emojis, no lists.
+- Very simple spoken words with an Indian flavour (you may use "beta", "achha", "wah" now and then). 1-2 short sentences, at most 20 words in total. Easy words only. No emojis, no lists.
 - First react to EXACTLY what he said (repeat his key word happily), then ask ONE easy question or give ONE small task. Almost every turn ends with a question.
 - Praise the specific thing he did ("You said please! So polite!"). Be excited about his effort. Use his name only sometimes.
 - His words come from speech recognition: they may be misheard, cut short or partly Hindi. Guess kindly what a 6-year-old meant. Never say "I did not understand" twice in a row; offer a choice of two instead ("Biscuit or chocolate?").
@@ -2060,7 +2072,7 @@ ${A.goals.map((g,i)=>`${i+1}. ${g}`).join('\n')}
 Work on the current goal (given in brackets with each message). Set "goal_done": true in the turn where he has done the current goal (helped or not). When told all goals are done, say a warm short goodbye and set "end": true.
 
 Reply with ONLY one JSON object:
-{"say":"what you say now","emotion":"happy|surprised|thinking|sad|neutral","gesture":"idle|wave|give|point|think|clap","give":"one emoji of a thing you hand him now, or empty","take":"one emoji of a thing he hands you now, or empty","model":"a short sentence for him to copy, or empty","goal_done":false,"star":false,"fact":"a new short fact you learned about him (likes, family, school), or empty","end":false}
+{"heard":"what he said (only when audio was given)","say":"what you say now","emotion":"happy|surprised|thinking|sad|neutral","gesture":"idle|wave|give|point|think|clap","give":"one emoji of a thing you hand him now, or empty","take":"one emoji of a thing he hands you now, or empty","model":"a short sentence for him to copy, or empty","goal_done":false,"star":false,"fact":"a new short fact you learned about him (likes, family, school), or empty","end":false}
 Set "star": true when he tries hard or says something new by himself.`;
 }
 
@@ -2083,15 +2095,18 @@ bindTray6=function(){_bindTray6();const f=document.getElementById('tsf');if(f)f.
   const r=app().querySelector('[data-ev="resume"]');if(r)r.onclick=()=>{SC.paused=false;SC.resolve&&SC.resolve({type:'resume'})}};
 
 const EMOS=['happy','surprised','thinking','sad','neutral'],GESTS=['idle','wave','give','point','think','clap'];
-async function aiTurn(id,userMsg){
-  SC.hist.push({role:'user',content:userMsg});
+async function aiTurn(id,userMsg,audio){
+  SC.hist.push({role:'user',content:userMsg,...(audio?{audio}:{})});
   const hist=SC.hist.slice(-18);if(hist[0].role!=='user')hist.shift();
   SC.phase='think';SC.emo='thinking';refreshTray6();refreshPOV();
   let r=null;
   for(let a=0;a<2&&!r;a++){try{r=parseJSON(await aiCall(SC.sys,hist,{json:true,max:500}))}catch(e){AIERR.last=String(e.message||e);if(/key|401|403/.test(AIERR.last))break;await sleep(600)}}
   if(!alive(id))return null;
   if(!r||!r.say){SC.hist.pop();return null}
+  if(audio&&r.heard){SC.said++;SC.log.push([kidName(),String(r.heard)]);await heard(id,String(r.heard))}else if(audio)SC.log.push([kidName(),'(no clear words)']);
+  if(!alive(id))return null;
   r.say=String(r.say).slice(0,220);
+  const u=SC.hist[SC.hist.length-1];if(u&&u.audio){delete u.audio;u.content=r.heard?`${kidName()} said: "${r.heard}"`:`(${kidName()} made a sound but no clear words.)`}
   SC.hist.push({role:'assistant',content:JSON.stringify(r)});
   return r;
 }
@@ -2108,19 +2123,19 @@ async function aiAct(id,r){
   SC.log.push([getChar(SC.charId).n,r.say]);
 }
 async function runAI(id){
-  const goals=SC.steps,n=goals.length,MAX=SC.k==='chat'?16:18;let silent=0,fails=0;
+  const goals=SC.steps,n=goals.length,MAX=SC.k==='chat'?16:18;let silent=0,fails=0,aud=null;
   await sleep(400);
   let msg=`[${kidName()} has just arrived. Greet him warmly and start with goal 1: ${goals[0]}]`;
   for(let t=0;t<MAX&&alive(id);t++){
     const last=SC.step>=n||t>=MAX-2;
     if(last)msg+=`\n[All goals done or time is up. Say a warm, short goodbye with praise and set end=true.]`;
     else msg+=`\n[Current goal ${SC.step+1}/${n}: ${goals[SC.step]}]`;
-    const r=await aiTurn(id,msg);if(!alive(id))return;
+    const r=await aiTurn(id,msg,aud);aud=null;if(!alive(id))return;
     if(!r){fails++;
       if(fails>=2){await charSays(id,'Oh ho! Let us play the simple way now.','think','surprised');if(!alive(id))return;
         if(SC.k==='chat'){SC.ai=false;SC.steps=[];renderPOV();return runChat(id)}
         const P=PLACE_DATA[SC.k];SC.ai=false;SC.steps=P.steps;SC.step=0;SC.res=[];renderPOV();return runScene(id)}
-      await charSays(id,'Sorry beta, say that again?','think','neutral');t--;}
+      await charSays(id,'Sorry beta, say that again?','think','neutral');t--;msg=`(Let us continue. ${kidName()} will answer again.)`;}
     else{fails=0;await aiAct(id,r);if(!alive(id))return;if(r.end||last&&t>=MAX-1)break}
     /* his turn */
     let inp;
@@ -2129,7 +2144,8 @@ async function runAI(id){
       if(w.type==='again'){SC.phase='talk';refreshTray6();await charSays(id,SC.line,'idle',SC.emo);if(SC.model)await say(SC.model,KIDV());continue}
       break}
     SC.phase='talk';
-    if(inp.type==='speech'){silent=0;SC.said++;await heard(id,inp.text);SC.log.push([kidName(),translit(inp.text)]);
+    if(inp.type==='audio'){silent=0;aud=inp.b64;msg=`[Audio: ${kidName()} is speaking. Fill "heard" first, then reply to it.]`}
+    else if(inp.type==='speech'){silent=0;SC.said++;await heard(id,inp.text);SC.log.push([kidName(),translit(inp.text)]);
       const alts=(inp.alts||[]).map(translit).filter((a,i,s)=>a&&a!==translit(inp.text)&&s.indexOf(a)===i).slice(0,2);
       msg=`${kidName()} said: "${translit(inp.text)}"${alts.length?` (the mic also heard: ${alts.map(a=>`"${a}"`).join(', ')})`:''}`;}
     else if(inp.type==='silence'){silent++;SC.log.push([kidName(),'(quiet)']);
@@ -2186,11 +2202,14 @@ function aiSetupHTML(){
    <li>Copy karke neeche paste karein aur <b>Test</b> dabayein.</li></ol>
    <p class="muted small">Google ka free tier roz ki kai baatcheet ke liye kaafi hai. Groq (console.groq.com/keys, "gsk_…") bhi free hai. Anthropic key ("sk-ant-…") paid hai. Key sirf isi phone mein rehti hai.</p></details>
   <label class="f">API key<input id="aik" type="password" value="${esc(PROFILE.apiKey||'')}" placeholder="AIza… / gsk_… / sk-ant-…" autocomplete="off"></label>
+  ${typeof VOICE!=='undefined'&&VOICE?`<label class="f">Sunne ka tareeka<select id="ailm"><option value="ai">AI sunega – koi bhi bhasha (Gemini key ke saath)</option><option value="phone">Phone ka speech-to-text (sirf ek bhasha)</option></select></label>`:''}
+  <label class="f">Characters kis bhasha mein bolein<select id="airl"><option value="en">Simple English (Indian accent)</option><option value="mix">Hinglish (English + Hindi shabd)</option></select></label>
   <div class="row"><button type="button" class="cta" id="aisave">💾 Save + Test</button>${p?'<button type="button" class="cta soft" id="aidel">Hatao</button>':''}</div>
   <p class="muted small" id="aiout"></p></div>`;
 }
 function bindAISetup(after){
-  const out=$('#aiout');
+  const out=$('#aiout');const lm=$('#ailm'),rl=$('#airl');if(lm){lm.value=PROFILE.listenMode==='phone'?'phone':'ai';lm.onchange=()=>{PROFILE.listenMode=lm.value;Store.profile()}}
+  if(rl){rl.value=PROFILE.replyLang==='mix'?'mix':'en';rl.onchange=()=>{PROFILE.replyLang=rl.value;Store.profile()}}
   $('#aisave').onclick=async()=>{PROFILE.apiKey=$('#aik').value.trim();PROFILE.aiModels=null;PROFILE.aiModel='';PROFILE.aiNoThink=undefined;await Store.profile();SAMPLE=NATIVE_SAMPLE||keySample();
     if(!aiOn()){out.textContent='Key khaali hai.';return}
     out.textContent='⏳ Test ho raha hai…';
@@ -2218,6 +2237,75 @@ pProgress=function(){_pProgress();const cv=LOGS.filter(l=>l.d&&l.d.talk&&l.d.tal
 const _home=SCREENS.home;
 SCREENS.home=()=>{_home();if(!aiOn()){const s=app().querySelector('.duo');if(s)s.insertAdjacentHTML('beforebegin',`<button class="aiban" onclick="go('aisetup')"><span>✨</span><b>Mummy/Papa: AI jodein (free)</b><small>Characters Shivansh ki har baat sun kar khud jawab denge</small></button>`)}
   else{const h=app().querySelector('.hi-small');if(h)h.insertAdjacentHTML('beforeend',' <span class="aion">✨ AI</span>')}};
+
+/* =========================================================
+   v8 — LISTEN IN ANY LANGUAGE
+   With a Gemini key, Shivansh's voice is recorded and sent to Gemini as audio,
+   so Hindi, English, Hinglish or any other language (and unclear child speech) works.
+   ========================================================= */
+/* one-time setup link: https://…/#k=<key>  (the part after # never reaches any server) */
+(function(){try{const m=location.hash.match(/[#&]k=([^&]+)/);if(m){const k=decodeURIComponent(m[1]).trim();if(k.length>20){PROFILE.apiKey=k;PROFILE.aiModels=null;PROFILE.aiModel='';PROFILE.aiNoThink=undefined;PROFILE.listenMode='ai';cacheLocal();setTimeout(()=>{try{Store.profile()}catch(e){}toast('✨ AI key lag gayi!')},800)}
+  history.replaceState(null,'',location.pathname+location.search)}}catch(e){}})();
+
+const canRecord=()=>!!(typeof VOICE!=='undefined'&&VOICE&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&(window.AudioContext||window.webkitAudioContext));
+let AUDIO_FAIL=false;
+const audioMode=()=>!AUDIO_FAIL&&aiProv()==='gemini'&&canRecord()&&PROFILE.voiceOff!==true&&PROFILE.listenMode!=='phone';
+
+let MICSTREAM=null,REC8=null;
+async function micStream(){
+  if(MICSTREAM&&MICSTREAM.getTracks().some(t=>t.readyState==='live'))return MICSTREAM;
+  MICSTREAM=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1}});
+  return MICSTREAM;
+}
+function micRelease(){try{MICSTREAM&&MICSTREAM.getTracks().forEach(t=>t.stop())}catch(e){}MICSTREAM=null}
+function stopRec8(){if(REC8){const r=REC8;REC8=null;r.cancel()}}
+/* record one turn: waits for speech, stops after a short pause. Resolves {b64,ms} or null (silence) */
+function recordTurn(onLevel,{maxWait=8000,maxLen=12000,tail=1300}={}){
+  return new Promise(async res=>{
+    let done=false,stream;
+    const fin=v=>{if(done)return;done=true;try{proc&&proc.disconnect();src&&src.disconnect()}catch(e){}clearInterval(tick);if(REC8&&REC8.id===id)REC8=null;res(v)};
+    const id=Math.random();
+    try{stream=await micStream()}catch(e){if(e&&e.name==='NotAllowedError'){MIC_BLOCKED=true;micBanner()}fin({err:true});return}
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();try{await AC.resume()}catch(e){}
+    const src=AC.createMediaStreamSource(stream),proc=AC.createScriptProcessor(4096,1,1),sr=AC.sampleRate;
+    const chunks=[];let floor=0.01,nf=0,started=0,lastVoice=0;const t0=performance.now();
+    proc.onaudioprocess=e=>{if(done)return;const d=e.inputBuffer.getChannelData(0);let s=0;for(let i=0;i<d.length;i++)s+=d[i]*d[i];const rms=Math.sqrt(s/d.length);const now=performance.now();
+      if(now-t0<350){floor=(floor*nf+rms)/(++nf);return}
+      const th=Math.max(0.018,floor*3.2);onLevel&&onLevel(Math.min(1,rms/(th*3)));
+      if(rms>th){if(!started){started=now}lastVoice=now}
+      if(started)chunks.push(new Float32Array(d));else{chunks.length=0;chunks.push(new Float32Array(d))}/* keep a little audio before speech */
+      if(started&&now-lastVoice>tail)finish();else if(started&&now-started>maxLen)finish();};
+    const finish=()=>{if(done)return;const ms=performance.now()-started;if(ms<250){fin(null);return}fin({b64:toWav16k(chunks,sr),ms})};
+    src.connect(proc);proc.connect(AC.destination);
+    const tick=setInterval(()=>{if(!started&&performance.now()-t0>maxWait)fin(null)},200);
+    REC8={id,cancel:()=>fin(null),stopNow:()=>{if(started)finish();else fin(null)}};
+  });
+}
+function toWav16k(chunks,sr){
+  let len=chunks.reduce((a,c)=>a+c.length,0);const all=new Float32Array(len);let o=0;chunks.forEach(c=>{all.set(c,o);o+=c.length});
+  const ratio=sr/16000,n=Math.floor(len/ratio),pcm=new Int16Array(n);
+  for(let i=0;i<n;i++){const a=Math.floor(i*ratio),b=Math.min(len,Math.floor((i+1)*ratio));let s=0;for(let j=a;j<b;j++)s+=all[j];const v=Math.max(-1,Math.min(1,(s/Math.max(1,b-a))*1.6));pcm[i]=v<0?v*0x8000:v*0x7FFF}
+  const buf=new ArrayBuffer(44+n*2),dv=new DataView(buf);const w=(p,s)=>{for(let i=0;i<s.length;i++)dv.setUint8(p+i,s.charCodeAt(i))};
+  w(0,'RIFF');dv.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,16000,true);dv.setUint32(28,32000,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,n*2,true);
+  new Int16Array(buf,44).set(pcm);
+  const by=new Uint8Array(buf);let bin='';for(let i=0;i<by.length;i+=0x8000)bin+=String.fromCharCode.apply(null,by.subarray(i,i+0x8000));return btoa(bin);
+}
+
+/* listen in AI-audio mode instead of the phone's speech-to-text */
+const _listenNow=listenNow;
+listenNow=function(id){
+  if(!(SC&&SC.ai&&audioMode()))return _listenNow(id);
+  if(!alive(id)||!SC.resolve||SC.listening)return;
+  SC.listening=true;SC.heard='';refreshTray6();sfx('ting');
+  recordTurn(l=>{const e=document.querySelector('.talkzone.on .ear');if(e)e.style.transform=`scale(${1+l*.35})`},{}).then(r=>{
+    if(!alive(id))return;SC.listening=false;if(!SC.resolve)return;
+    if(r&&r.err){AUDIO_FAIL=true;return _listenNow(id)}
+    SC.resolve(r?{type:'audio',b64:r.b64}:{type:'silence'})});
+};
+const _stopRec=stopRec;
+stopRec=function(){stopRec8();return _stopRec()};
+const _go8=go;
+go=function(s,...a){_go8(s,...a);if(!['scene','chat'].includes(s))micRelease()};
 
 /* ================= PARENT AREA ================= */
 const ACTN={room:'🪄 Magic Room',scene:'🏙️ Shehar',story:'📖 Kahani',chat:'💬 Aarav',report:'📋 Report card',gonogo:'🎈 Laal Gubbare',fish:'🐟 Machhli',simon:'🧠 Yaad Karo',pairs:'🃏 Jodi',follow:'👂 Suno aur Karo',odd:'🔍 Kaun Alag',count:'🔢 Gino'};
