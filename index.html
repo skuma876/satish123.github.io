@@ -718,6 +718,22 @@ section.hello h1{font-size:1.9rem;white-space:nowrap}
 .hello-r .pill{flex-direction:row;width:auto;height:auto;border-radius:99px}
 .mission{text-align:left;width:100%;box-sizing:border-box}
 .mission li{text-align:left}
+/* v7 AI */
+.typesaid{display:flex;gap:8px}
+.typesaid input{flex:1;min-width:0;border:2px solid #DDE2EF;border-radius:16px;padding:10px 12px;font:inherit;font-size:1rem;background:#fff;color:var(--v6ink)}
+.typesaid .cta{padding:8px 16px;font-size:1.2rem}
+.bigmic{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;border-radius:30px;padding:18px;background:linear-gradient(160deg,#22C7B5,#0E8F84);color:#fff;box-shadow:0 6px 0 #0A6E66,0 12px 20px rgba(14,143,132,.3);animation:nudge6 1.4s ease-in-out infinite}
+.bigmic span{font-size:3.4rem;width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center}
+.bigmic b{font-family:var(--display);font-size:1.5rem}
+.aiban{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:0;border-radius:20px;padding:12px 14px 12px 52px;position:relative;background:linear-gradient(135deg,#FFF3C4,#FFE0B8);color:#5A3A00;box-shadow:0 4px 0 #EFC98A}
+.aiban span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.7rem}
+.aiban b{font-family:var(--display);font-size:1.05rem}.aiban small{opacity:.85}
+.aion{background:linear-gradient(90deg,#7C5CFF,#FF7A59);color:#fff;border-radius:99px;padding:1px 8px;font-size:.75rem;vertical-align:middle}
+.aicard h3{margin-top:0}.okline{font-weight:700;color:#0E8F84}
+.steps6{padding-left:20px;line-height:1.6;margin:8px 0}.steps6 a{color:#5B3BE0;font-weight:700}
+.aicard details summary{cursor:pointer;padding:6px 0}
+.convo{border-top:1px solid #EEF0F8;padding:6px 0}.convo summary{cursor:pointer;font-weight:600}
+.convo p{margin:4px 0 4px 6px;font-size:.95rem}.convo p.kid{color:#5B3BE0}
 
 </style>
 </head><body><div class="wrap" id="app"></div>
@@ -1232,7 +1248,7 @@ async function charSays(id,line,gesture,emo){
 async function modelSay(id,text){if(!alive(id))return;await charSays(id,'You can say:','think','happy');if(!alive(id))return;await say(text,KIDV())}
 function waitInput(id){return new Promise(res=>{
   SC.resolve=v=>{SC.resolve=null;SC.listening=false;stopRec();res(v)};SC.heard='';
-  renderPOV();if(micOK())TIMERS.push(setTimeout(()=>listenNow(id),250));
+  renderPOV();if(micOK()&&!SC.paused&&SC.phase!=='paused')TIMERS.push(setTimeout(()=>listenNow(id),250));
 })}
 function listenNow(id){
   if(!micOK()||!alive(id)||!SC.resolve||SC.listening)return;
@@ -1915,6 +1931,294 @@ async function roomShell(id,task,who){
   RM.onEvent=null;stopRec();if(!rAlive(id))return;rAdjust('focus',prompt);await rSayIt(id,who,task.model);
 }
 
+/* =========================================================
+   v7 — REAL AI CONVERSATIONS
+   Characters think up every reply from what Shivansh actually said.
+   AI sources (first available wins):
+     1. claude.ai built-in Claude (when opened as a claude.ai artifact)
+     2. A key pasted by the parent: Google Gemini (free), Groq (free) or Anthropic (paid)
+   Without AI the old scripted scenes still run.
+   ========================================================= */
+let NATIVE_SAMPLE=null;
+const aiProv=()=>{const k=(PROFILE.apiKey||'').trim();if(!k)return '';if(/^AIza/.test(k))return 'gemini';if(/^gsk_/.test(k))return 'groq';if(/^sk-ant/.test(k))return 'claude';return 'gemini'};
+const aiOn=()=>!!(NATIVE_SAMPLE||aiProv());
+const AIERR={last:''};
+
+function withTimeout(ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return {signal:c.signal,done:()=>clearTimeout(t)}}
+
+/* --- Gemini: find the best free "flash" model this key can use --- */
+async function gemModels(key){
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=${encodeURIComponent(key)}`);
+  if(!r.ok)throw new Error('key '+r.status);
+  const j=await r.json();
+  const ok=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
+    .filter(n=>/gemini/.test(n)&&/flash/.test(n)&&!/image|tts|audio|live|embed|vision|thinking|exp|robotics|computer|native/.test(n));
+  const ver=n=>parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/)||[0,0])[1])||0;
+  const sc=n=>n==='gemini-flash-latest'?999:ver(n)*10-(/lite/.test(n)?6:0)-(/preview/.test(n)?3:0)-(/-\d{3}$|\d\d-\d\d/.test(n)?1:0);
+  return ok.sort((a,b)=>sc(b)-sc(a));
+}
+async function gemCall(system,msgs,o){
+  const key=PROFILE.apiKey.trim();
+  let list=PROFILE.aiModels&&PROFILE.aiModels.length?PROFILE.aiModels:null;
+  if(!list){try{list=await gemModels(key)}catch(e){list=[]}if(!list.length)list=['gemini-flash-latest','gemini-2.5-flash','gemini-2.5-flash-lite','gemini-2.0-flash'];PROFILE.aiModels=list.slice(0,6);cacheLocal()}
+  let lastErr='';
+  for(const m of list.slice(0,4)){
+    for(const think of PROFILE.aiNoThink===false?[false]:[true,false]){
+      const body={systemInstruction:{parts:[{text:system}]},contents:msgs.map(x=>({role:x.role==='assistant'?'model':'user',parts:[{text:x.content}]})),
+        generationConfig:{temperature:.85,maxOutputTokens:o.max||600,...(o.json?{responseMimeType:'application/json'}:{}),...(think?{thinkingConfig:{thinkingBudget:0}}:{})}};
+      const T=withTimeout(o.timeout||15000);
+      try{
+        const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal:T.signal});T.done();
+        if(r.status===400&&think){lastErr='400';continue}
+        if(!r.ok){lastErr=m+' '+r.status;if(r.status===400||r.status===401||r.status===403)throw new Error(lastErr);break}
+        const j=await r.json();const t=((((j.candidates||[])[0]||{}).content||{}).parts||[]).map(p=>p.text||'').join('');
+        if(!t){lastErr=m+' empty';break}
+        if(!think)PROFILE.aiNoThink=false;
+        if(PROFILE.aiModels[0]!==m){PROFILE.aiModels=[m,...PROFILE.aiModels.filter(x=>x!==m)];cacheLocal()}
+        return t;
+      }catch(e){T.done();if(/400|401|403/.test(String(e.message)))throw e;lastErr=String(e.message||e);break}
+    }
+  }
+  throw new Error(lastErr||'gemini failed');
+}
+async function groqCall(system,msgs,o){
+  const models=[PROFILE.aiModel,'llama-3.3-70b-versatile','openai/gpt-oss-120b','meta-llama/llama-4-scout-17b-16e-instruct','llama-3.1-8b-instant'].filter(Boolean);let lastErr='';
+  for(const m of models){const T=withTimeout(o.timeout||15000);
+    try{const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+PROFILE.apiKey.trim()},signal:T.signal,
+      body:JSON.stringify({model:m,temperature:.85,max_tokens:o.max||600,...(o.json?{response_format:{type:'json_object'}}:{}),messages:[{role:'system',content:system},...msgs]})});T.done();
+      if(r.status===401||r.status===403)throw new Error('key '+r.status);
+      if(!r.ok){lastErr=m+' '+r.status;continue}
+      const j=await r.json();const t=j.choices&&j.choices[0]&&j.choices[0].message.content;if(t){if(PROFILE.aiModel!==m){PROFILE.aiModel=m;cacheLocal()}return t}
+    }catch(e){T.done();if(/key/.test(e.message))throw e;lastErr=String(e.message||e)}}
+  throw new Error(lastErr||'groq failed');
+}
+async function claudeKeyCall(system,msgs,o){
+  const T=withTimeout(o.timeout||15000);
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:T.signal,headers:{'x-api-key':PROFILE.apiKey.trim(),'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:PROFILE.aiModel&&/claude/.test(PROFILE.aiModel)?PROFILE.aiModel:'claude-haiku-5-5',max_tokens:o.max||600,system,messages:msgs})});T.done();
+  if(!r.ok)throw new Error('claude '+r.status);const j=await r.json();return (j.content||[]).map(c=>c.text||'').join('');
+}
+async function nativeCall(system,msgs,o){
+  const m=msgs.map(x=>({role:x.role,content:x.content}));m[0]={role:'user',content:system+'\n\n'+m[0].content+(o.json?'\n\nReply with the JSON object only.':'')};
+  const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),o.timeout||20000);
+  try{const r=await NATIVE_SAMPLE(m,{modelTier:'quick',cache:false,signal:ctl.signal});return r.text||''}finally{clearTimeout(t)}
+}
+/* one entry point for every AI call in the app */
+async function aiCall(system,msgs,o={}){
+  if(typeof msgs==='string')msgs=[{role:'user',content:msgs}];
+  const p=aiProv();
+  if(p==='gemini')return gemCall(system,msgs,o);
+  if(p==='groq')return groqCall(system,msgs,o);
+  if(p==='claude')return claudeKeyCall(system,msgs,o);
+  if(NATIVE_SAMPLE)return nativeCall(system,msgs,o);
+  throw new Error('no AI');
+}
+function parseJSON(t){try{return JSON.parse(t)}catch(e){}const m=String(t).match(/\{[\s\S]*\}/);if(m)try{return JSON.parse(m[0])}catch(e){}return {say:String(t).replace(/[{}"]/g,'').slice(0,160)}}
+/* older helpers now use the same AI */
+async function aiReply(system,user){if(!aiOn())return null;try{const t=await aiCall(system,[{role:'user',content:user+'\nReply with the line only.'}],{max:120,timeout:9000});return String(t).trim().replace(/^"|"$/g,'').split('\n')[0]||null}catch(e){return null}}
+/* the parent "AI salah" tab uses SAMPLE(prompt,{onText}) */
+function keySample(){if(!aiProv())return null;const f=async(prompt,o={})=>{const t=await aiCall('You are a helpful assistant for Indian parents. Reply in simple Hinglish.',prompt,{max:1800,timeout:40000});o.onText&&o.onText({text:t});return {text:t}};return f}
+
+/* ---------------- what each place is about ---------------- */
+const AI_PLACES={
+  home:{goals:['Greet Mummy when he comes home','Tell Mummy one thing he did today (school, play, anything)','Tell Mummy he is hungry and what he wants to eat','Help Mummy: bring a plate or glass when asked','Say thank you to Mummy'],scene:'his home kitchen in the evening'},
+  park:{goals:['Say hi to Chintu','Tell his name','Ask "Can I play with you?"','Take turns: wait while Chintu bats, then he gets the bat','Say which game he likes and say bye'],scene:'a park with swings, a slide and a small cricket game'},
+  shop:{goals:['Greet Ramu Uncle','Ask for one thing he wants (biscuit, chocolate, chips, milk, bread, juice...)','Pay the money (hand over the coin)','Say thank you and bye'],scene:'a small Indian kirana shop with jars of toffees, biscuits, chips and milk'},
+  market:{goals:['Greet Shanti Aunty','Name one vegetable or fruit he wants','Say how many (count with Aunty)','Hold the bag and say thank you'],scene:'a busy vegetable market (sabzi mandi) with tomatoes, potatoes, onions, carrots, bananas'},
+  auto:{goals:['Greet Raju Bhaiya','Tell where he wants to go','Sit properly and keep hands inside','Say thank you when they reach'],scene:'an auto-rickshaw ride through the city'},
+  restaurant:{goals:['Greet Sunil Bhaiya','Order one food he wants, with please','Ask for water','Wait calmly for the food (count to five together)','Say thank you'],scene:'a family restaurant with dosa, idli, pizza, noodles, paneer, ice cream'},
+  doctor:{goals:['Greet Doctor Mehta','Tell where it hurts or how he feels','Open his mouth and say aaa, be brave','Say thank you Doctor'],scene:'a friendly children\'s clinic with a stethoscope and stickers'},
+  party:{goals:['Say Happy Birthday to Aarav','Give the gift','Sing or clap for the cake','Play a game and wait for his turn','Say bye nicely'],scene:'Aarav\'s birthday party with balloons, cake and games'},
+  school:{goals:['Say Good morning Ma\'am','Answer one easy question about colours, animals or numbers','Raise his hand before speaking','Ask Ma\'am for help: "Ma\'am, help me please"','Say bye to Ma\'am'],scene:'his UKG classroom'},
+  chat:{goals:['Talk about something Shivansh loves','Ask him an easy question about his day','Get him to ask Aarav a question back (turn-taking)','Listen to Aarav\'s answer and react','Talk about one more fun thing, then say bye'],scene:'the school playground at break time; Aarav is his classmate and friend'}
+};
+
+function aiSystem(k){
+  const P=k==='chat'?{n:'Playground'}:PLACE_DATA[k],A=AI_PLACES[k],C=getChar(k==='chat'?'aarav':P.char);
+  const ints=(PROFILE.interests||[]).join(', ')||'cars, trains, animals, cartoons (not sure yet — find out!)';
+  const facts=(PROFILE.facts||[]).slice(-12).join('; ')||'nothing yet';
+  return `You are ${C.n}. ${C.role}. ${C.kid?'You are a child, talk like a friendly 6-7 year old.':'You are a warm Indian grown-up.'}
+Setting: ${A.scene}. This is pretend play inside a talking app on a phone. The child hears your words (text-to-speech) and answers by voice.
+
+The child: ${kidName()}, a ${PROFILE.age||'6'}-year-old Indian boy in UKG. Signs of ADHD: short attention, gets distracted. Good memory. He talks mostly about his own interests and finds it hard to keep a conversation going. He cannot read or write yet. He loves: ${ints}. What you remember about him from before: ${facts}.
+
+YOUR JOB: a real, warm, back-and-forth conversation that keeps him engaged and motivated, and gently builds talking, listening, turn-taking and social skills.
+
+HOW TO TALK
+- Very simple spoken English with an Indian flavour (you may use "beta", "achha", "wah" now and then). 1-2 short sentences, at most 20 words in total. Easy words only. No emojis, no lists.
+- First react to EXACTLY what he said (repeat his key word happily), then ask ONE easy question or give ONE small task. Almost every turn ends with a question.
+- Praise the specific thing he did ("You said please! So polite!"). Be excited about his effort. Use his name only sometimes.
+- His words come from speech recognition: they may be misheard, cut short or partly Hindi. Guess kindly what a 6-year-old meant. Never say "I did not understand" twice in a row; offer a choice of two instead ("Biscuit or chocolate?").
+- If he says nothing: ask again in fewer words with a choice of two. If he is quiet again, put the exact words for him in "model".
+- If he answers with one or two words, accept it warmly and give a fuller sentence (max 7 words) in "model" so he can copy it.
+- If he goes off-topic (often his favourite things), join in excitedly for one sentence, connect it to this place, then bring him back to the current goal.
+- Keep it playful: little surprises, sounds ("Ding ding!"), jokes, handing him things. Short attention: keep every turn quick.
+- Never scold, never say "wrong". Never mention AI, apps, phones or screens. Never ask for his address, phone number or secrets. If he says he is hurt, sad or scared, comfort him and tell him to tell Mummy.
+
+GOALS for this visit, in order:
+${A.goals.map((g,i)=>`${i+1}. ${g}`).join('\n')}
+Work on the current goal (given in brackets with each message). Set "goal_done": true in the turn where he has done the current goal (helped or not). When told all goals are done, say a warm short goodbye and set "end": true.
+
+Reply with ONLY one JSON object:
+{"say":"what you say now","emotion":"happy|surprised|thinking|sad|neutral","gesture":"idle|wave|give|point|think|clap","give":"one emoji of a thing you hand him now, or empty","take":"one emoji of a thing he hands you now, or empty","model":"a short sentence for him to copy, or empty","goal_done":false,"star":false,"fact":"a new short fact you learned about him (likes, family, school), or empty","end":false}
+Set "star": true when he tries hard or says something new by himself.`;
+}
+
+/* ---------------- the conversation engine ---------------- */
+function aiTray(){
+  if(SC.phase==='think')return `<div class="talkzone"><div class="ear">💭</div><div class="tz"><b>${esc(getChar(SC.charId).n)} is thinking…</b></div></div>`;
+  if(SC.phase==='paused')return `<button class="bigmic" data-ev="resume"><span>🎤</span><b>Tap and talk!</b></button>${parentRowAI()}`;
+  if(SC.phase!=='say')return `<div class="talkzone"><div class="ear">👂</div><div class="tz"><b>${SC.phase==='done'?'':'Listen…'}</b></div></div>`;
+  let h='';
+  if(micOK())h+=`<div class="talkzone ${SC.listening?'on':'turn'}"><div class="ear">${SC.listening?'🎤':'🗣️'}</div><div class="tz"><b>${SC.listening?'I am listening… speak!':'Your turn! Speak'}</b><span id="heard">${SC.heard?esc(translit(SC.heard)):''}</span></div></div>`;
+  else h+=`<div class="talkzone turn"><div class="ear">🗣️</div><div class="tz"><b>Your turn! Speak</b><span class="muted small">Mummy/Papa: neeche likh dein usne kya bola</span></div></div>`;
+  h+=`<form class="typesaid" id="tsf"><input id="tsi" placeholder="${micOK()?'Mic ne nahi suna? Yahan likhein':'Shivansh ne kya bola? (likhein)'}" autocomplete="off" enterkeyhint="send"><button class="cta" aria-label="Send">➤</button></form>`;
+  return h+parentRowAI();
+}
+const parentRowAI=()=>`<div class="parentrow"><span>Parent:</span><button class="pbtn" data-ev="help">💡 Help him</button><button class="pbtn" data-ev="again">🔁 Say again</button>${micOK()&&!SC.listening&&SC.phase==='say'?'<button class="pbtn" data-ev="listen">🎤 Listen</button>':''}<button class="pbtn" data-ev="skip">⏭ Next</button></div>`;
+const _trayHTML=trayHTML;
+trayHTML=function(){return SC&&SC.ai?aiTray():_trayHTML()};
+const _bindTray6=bindTray6;
+bindTray6=function(){_bindTray6();const f=document.getElementById('tsf');if(f)f.onsubmit=e=>{e.preventDefault();const v=$('#tsi').value.trim();if(v&&SC.resolve)SC.resolve({type:'speech',text:v,alts:[v],typed:true})};
+  const r=app().querySelector('[data-ev="resume"]');if(r)r.onclick=()=>{SC.paused=false;SC.resolve&&SC.resolve({type:'resume'})}};
+
+const EMOS=['happy','surprised','thinking','sad','neutral'],GESTS=['idle','wave','give','point','think','clap'];
+async function aiTurn(id,userMsg){
+  SC.hist.push({role:'user',content:userMsg});
+  const hist=SC.hist.slice(-18);if(hist[0].role!=='user')hist.shift();
+  SC.phase='think';SC.emo='thinking';refreshTray6();refreshPOV();
+  let r=null;
+  for(let a=0;a<2&&!r;a++){try{r=parseJSON(await aiCall(SC.sys,hist,{json:true,max:500}))}catch(e){AIERR.last=String(e.message||e);if(/key|401|403/.test(AIERR.last))break;await sleep(600)}}
+  if(!alive(id))return null;
+  if(!r||!r.say){SC.hist.pop();return null}
+  r.say=String(r.say).slice(0,220);
+  SC.hist.push({role:'assistant',content:JSON.stringify(r)});
+  return r;
+}
+async function aiAct(id,r){
+  SC.phase='talk';refreshTray6();
+  if(r.take)await giveToChar(id,String(r.take).slice(0,4));
+  if(r.goal_done){SC.step=Math.min(SC.steps.length,SC.step+1);SC.done++;const d=app().querySelector('.dots');if(d)d.innerHTML=SC.steps.map((_,i)=>`<i class="${i<SC.step?'done':i===SC.step?'now':''}"></i>`).join('')}
+  if(r.star||r.goal_done){await star(id);const p=app().querySelector('.pill');if(p)p.textContent='⭐ '+SC.stars}
+  if(!alive(id))return;
+  await charSays(id,r.say,GESTS.includes(r.gesture)?r.gesture:'idle',EMOS.includes(r.emotion)?r.emotion:'happy');
+  if(r.give)await giveToKid(id,String(r.give).slice(0,4));
+  if(r.model&&alive(id)){SC.model=String(r.model).slice(0,80);await sleep(200);await say(SC.model,KIDV())}else SC.model='';
+  if(r.fact){const f=String(r.fact).slice(0,80);PROFILE.facts=(PROFILE.facts||[]).filter(x=>x!==f).concat(f).slice(-20);Store.profile()}
+  SC.log.push([getChar(SC.charId).n,r.say]);
+}
+async function runAI(id){
+  const goals=SC.steps,n=goals.length,MAX=SC.k==='chat'?16:18;let silent=0,fails=0;
+  await sleep(400);
+  let msg=`[${kidName()} has just arrived. Greet him warmly and start with goal 1: ${goals[0]}]`;
+  for(let t=0;t<MAX&&alive(id);t++){
+    const last=SC.step>=n||t>=MAX-2;
+    if(last)msg+=`\n[All goals done or time is up. Say a warm, short goodbye with praise and set end=true.]`;
+    else msg+=`\n[Current goal ${SC.step+1}/${n}: ${goals[SC.step]}]`;
+    const r=await aiTurn(id,msg);if(!alive(id))return;
+    if(!r){fails++;
+      if(fails>=2){await charSays(id,'Oh ho! Let us play the simple way now.','think','surprised');if(!alive(id))return;
+        if(SC.k==='chat'){SC.ai=false;SC.steps=[];renderPOV();return runChat(id)}
+        const P=PLACE_DATA[SC.k];SC.ai=false;SC.steps=P.steps;SC.step=0;SC.res=[];renderPOV();return runScene(id)}
+      await charSays(id,'Sorry beta, say that again?','think','neutral');t--;}
+    else{fails=0;await aiAct(id,r);if(!alive(id))return;if(r.end||last&&t>=MAX-1)break}
+    /* his turn */
+    let inp;
+    for(;;){SC.phase=SC.paused?'paused':'say';const w=await waitInput(id);if(!alive(id))return;inp=w;
+      if(w.type==='listen'||w.type==='resume'){continue}
+      if(w.type==='again'){SC.phase='talk';refreshTray6();await charSays(id,SC.line,'idle',SC.emo);if(SC.model)await say(SC.model,KIDV());continue}
+      break}
+    SC.phase='talk';
+    if(inp.type==='speech'){silent=0;SC.said++;await heard(id,inp.text);SC.log.push([kidName(),translit(inp.text)]);
+      const alts=(inp.alts||[]).map(translit).filter((a,i,s)=>a&&a!==translit(inp.text)&&s.indexOf(a)===i).slice(0,2);
+      msg=`${kidName()} said: "${translit(inp.text)}"${alts.length?` (the mic also heard: ${alts.map(a=>`"${a}"`).join(', ')})`:''}`;}
+    else if(inp.type==='silence'){silent++;SC.log.push([kidName(),'(quiet)']);
+      msg=silent>=2?`(${kidName()} is quiet again. Ask in very few words, give a choice of two, and put the exact words in "model".)`:`(${kidName()} said nothing for a few seconds.)`;
+      if(silent>=3){SC.paused=true;silent=0;await say('Tap the mic when you are ready!',NARR);SC.phase='paused';const w=await waitInput(id);if(!alive(id))return;SC.paused=false;
+        msg=w.type==='speech'?`${kidName()} said: "${translit(w.text)}"`:`(${kidName()} is back and ready. Say something fun about his favourite things and ask an easy question.)`;if(w.type==='speech'){SC.said++;await heard(id,w.text)}}}
+    else if(inp.type==='help')msg=`(Parent pressed HELP: he is stuck. Ask again simply and give him the exact sentence to say in "model".)`;
+    else if(inp.type==='skip'){msg=`(Parent pressed NEXT: count the current goal as done, set goal_done=true, and move on to the next goal.)`;}
+    else if(inp.type==='said'){SC.said++;msg=`(He answered correctly but the mic missed it.)`}
+    else msg=`(${kidName()} said nothing.)`;
+  }
+  if(alive(id))aiEnd(id);
+}
+function aiEnd(id){
+  const n=SC.steps.length,d=Math.min(n,SC.step);
+  logAct(SC.k==='chat'?'chat':'scene',Math.max(1,Math.round(3*d/n)),{place:SC.k,ai:1,said:SC.said,goals:d+'/'+n,talk:SC.log.slice(-40)});
+  if(SC.k==='chat'){SC.phase='done';
+    app().innerHTML=`<div class="scene6">${topBar('💬 Talk with Aarav')}${povHTML()}<section class="win"><div class="bigstars">${'⭐'.repeat(Math.max(1,Math.round(3*d/n)))}</div><h1>Great talking!</h1><p>You talked ${SC.said} times.</p><div class="row2"><button class="cta" onclick="go('chat')">🔁 Again</button><button class="cta soft" onclick="go('home')">🏠 Home</button></div></section></div>`;
+    cue('yay');return}
+  SC.res=SC.steps.map((_,i)=>i<d?2:0);
+  const pr=PROG.places[SC.k]||(PROG.places[SC.k]={plays:0,best:0});
+  const P=PLACE_DATA[SC.k],k=SC.k,stars=Math.max(1,Math.round(3*d/n));pr.plays++;pr.best=Math.max(pr.best,stars);Store.prog();
+  SC.phase='done';SC.gesture='wave';
+  app().innerHTML=`<div class="scene6">${topBar(SC.title)}${povHTML()}
+   <section class="win"><div class="bigstars">${'⭐'.repeat(stars)}</div><h1>Well done!</h1><p>You talked ${SC.said} times!</p>
+   <div class="mission"><h3>🌟 Asli ${esc(P.n)} mein ye karna hai</h3><ol>${P.real.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p class="muted small">Mummy/Papa: wahan use pehle bolne dijiye, 5 second wait kariye.</p></div>
+   <div class="row2"><button class="cta" onclick="go('scene','${k}')">🔁 Again</button><button class="cta soft" onclick="go('story','${k}')">📖 Story</button><button class="cta soft" onclick="go('home')">🏠 Home</button></div></section></div>`;
+  cue('yay');say('Well done! You did it!',NARR);
+}
+const _scene=SCREENS.scene,_chat=SCREENS.chat;
+SCREENS.scene=(k)=>{
+  if(!aiOn())return _scene(k);
+  const P=PLACE_DATA[k];
+  SC={id:++SCID,k,ai:true,title:P.e+' '+P.n,bg:P.bg,color:P.col,charId:P.char,steps:AI_PLACES[k].goals,step:0,done:0,stars:0,said:0,res:[],phase:'talk',line:'',you:'',gesture:'wave',emo:'happy',bag:[],resolve:null,listening:false,hist:[],log:[],sys:aiSystem(k)};
+  renderPOV();cue(P.bg);runAI(SC.id);
+};
+SCREENS.chat=()=>{
+  if(!aiOn())return _chat();
+  SC={id:++SCID,k:'chat',ai:true,title:'💬 Talk with Aarav',bg:'park',color:'#3B7BE0',charId:'aarav',steps:AI_PLACES.chat.goals,step:0,done:0,stars:0,said:0,res:[],phase:'talk',line:'',you:'',gesture:'wave',emo:'happy',bag:[],resolve:null,listening:false,hist:[],log:[],sys:aiSystem('chat')};
+  renderPOV();cue('park');runAI(SC.id);
+};
+
+/* ---------------- parent: connect AI ---------------- */
+function aiSetupHTML(){
+  const p=aiProv();
+  return `<div class="card aicard"><h3>✨ AI se asli baatcheet</h3>
+  <p class="muted">AI judne par har character Shivansh ki <b>har baat sun kar khud naya jawab sochta hai</b> – koi fixed sawaal ya options nahi. Uski pasand yaad rakhta hai aur use motivate karta hai.</p>
+  ${NATIVE_SAMPLE&&!p?'<p class="okline">✓ claude.ai ka Claude jud gaya hai.</p>':''}
+  <p class="okline" id="aist">${p?`✓ Key lagi hai (${({gemini:'Google Gemini – free',groq:'Groq – free',claude:'Anthropic Claude – paid'})[p]})`:'Abhi AI juda nahi hai.'}</p>
+  <details ${p?'':'open'}><summary><b>Free key kaise banayein (1 minute)</b></summary><ol class="steps6">
+   <li>Phone/laptop par kholein: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+   <li>Apne Google (Gmail) account se sign in karein.</li>
+   <li><b>"Create API key"</b> dabayein. Ek lambi key banegi jo <b>AIza…</b> se shuru hoti hai.</li>
+   <li>Copy karke neeche paste karein aur <b>Test</b> dabayein.</li></ol>
+   <p class="muted small">Google ka free tier roz ki kai baatcheet ke liye kaafi hai. Groq (console.groq.com/keys, "gsk_…") bhi free hai. Anthropic key ("sk-ant-…") paid hai. Key sirf isi phone mein rehti hai.</p></details>
+  <label class="f">API key<input id="aik" type="password" value="${esc(PROFILE.apiKey||'')}" placeholder="AIza… / gsk_… / sk-ant-…" autocomplete="off"></label>
+  <div class="row"><button type="button" class="cta" id="aisave">💾 Save + Test</button>${p?'<button type="button" class="cta soft" id="aidel">Hatao</button>':''}</div>
+  <p class="muted small" id="aiout"></p></div>`;
+}
+function bindAISetup(after){
+  const out=$('#aiout');
+  $('#aisave').onclick=async()=>{PROFILE.apiKey=$('#aik').value.trim();PROFILE.aiModels=null;PROFILE.aiModel='';PROFILE.aiNoThink=undefined;await Store.profile();SAMPLE=NATIVE_SAMPLE||keySample();
+    if(!aiOn()){out.textContent='Key khaali hai.';return}
+    out.textContent='⏳ Test ho raha hai…';
+    try{const t=await aiCall('You are Ramu Uncle, a kind Indian shopkeeper. Reply with JSON {"say":"..."} only.',[{role:'user',content:'A 6-year-old boy says: "I want chocolate". Reply in one short warm sentence.'}],{json:true,max:200});
+      const r=parseJSON(t);out.innerHTML='✅ AI chal raha hai! Ramu Uncle ne kaha: “'+esc(r.say||t)+'”';say(r.say||'',{g:'m',pitch:.82});$('#aist').textContent='✓ Key lagi hai'}
+    catch(e){out.textContent='❌ Nahi chala ('+(e.message||e)+'). Key dobara copy karke dekhein, ya internet check karein.'}
+    after&&after()};
+  const d=$('#aidel');if(d)d.onclick=async()=>{PROFILE.apiKey='';PROFILE.aiModels=null;await Store.profile();SAMPLE=NATIVE_SAMPLE;after&&after(true)};
+}
+SCREENS.aisetup=()=>{
+  app().innerHTML=`${topBar('✨ AI connect')}${aiSetupHTML()}<button class="cta soft" onclick="go('home')">🏠 Home</button>`;
+  bindAISetup(del=>{if(del)SCREENS.aisetup()});
+};
+/* settings tab: show the AI card at the top, drop the old key field */
+const _pSettings=pSettings;
+pSettings=function(){_pSettings();const old=$('#sk');if(old){const l=old.closest('label');if(l)l.remove()}
+  $('#pv').insertAdjacentHTML('afterbegin',aiSetupHTML());bindAISetup(()=>pSettings());
+  const ss=$('#ss');if(ss){const o=ss.onclick;ss.onclick=async()=>{const k=PROFILE.apiKey;await o();PROFILE.apiKey=k;SAMPLE=NATIVE_SAMPLE||keySample();await Store.profile()}}};
+/* progress tab: show recent conversations so parents can read what he said */
+const _pProgress=pProgress;
+pProgress=function(){_pProgress();const cv=LOGS.filter(l=>l.d&&l.d.talk&&l.d.talk.length).slice(0,3);
+  $('#pv').insertAdjacentHTML('beforeend',`<div class="card"><h3>💬 Haal ki baatcheet</h3>${cv.length?cv.map(l=>`<details class="convo"><summary>${l.day} · ${l.d.place==='chat'?'Aarav':esc((PLACE_DATA[l.d.place]||{}).n||'')} · ${l.d.said||0} baar bola · goals ${l.d.goals||''}</summary>${l.d.talk.map(([w,t])=>`<p class="${w===kidName()?'kid':''}"><b>${esc(w)}:</b> ${esc(t)}</p>`).join('')}</details>`).join(''):'<p class="muted">AI baatcheet ke baad yahan dikhegi.</p>'}
+  ${(PROFILE.facts||[]).length?`<h3>🧠 AI ko Shivansh ke baare mein yaad hai</h3><ul>${PROFILE.facts.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:''}</div>`)};
+/* home: a small banner for parents when AI is not connected */
+const _home=SCREENS.home;
+SCREENS.home=()=>{_home();if(!aiOn()){const s=app().querySelector('.duo');if(s)s.insertAdjacentHTML('beforebegin',`<button class="aiban" onclick="go('aisetup')"><span>✨</span><b>Mummy/Papa: AI jodein (free)</b><small>Characters Shivansh ki har baat sun kar khud jawab denge</small></button>`)}
+  else{const h=app().querySelector('.hi-small');if(h)h.insertAdjacentHTML('beforeend',' <span class="aion">✨ AI</span>')}};
+
 /* ================= PARENT AREA ================= */
 const ACTN={room:'🪄 Magic Room',scene:'🏙️ Shehar',story:'📖 Kahani',chat:'💬 Aarav',report:'📋 Report card',gonogo:'🎈 Laal Gubbare',fish:'🐟 Machhli',simon:'🧠 Yaad Karo',pairs:'🃏 Jodi',follow:'👂 Suno aur Karo',odd:'🔍 Kaun Alag',count:'🔢 Gino'};
 function lastDays(n){const o=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);o.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'))}return o}
@@ -1980,7 +2284,7 @@ function pResearch(){
 }
 function pAdvice(){
   $('#pv').innerHTML=`<div class="card"><h3>Is hafte ka plan · AI salah</h3><p class="muted">Pichhle 14 din ka data, report card aur shadow step padh kar ek simple plan banega.</p>
-  <button class="btn" id="ab" ${SAMPLE?'':'disabled'}>Plan banao</button>${SAMPLE?'':'<p class="muted small">Ye feature claude.ai mein sign-in karke kholne par chalta hai.</p>'}<div class="advice" id="ao"></div>
+  <button class="btn" id="ab" ${SAMPLE?'':'disabled'}>Plan banao</button>${SAMPLE?'':'<p class="muted small">Iske liye Setup mein AI key jodein (free).</p>'}<div class="advice" id="ao"></div>
   <p class="note small">Ye salah doctor ya therapist ki jagah nahi hai.</p></div>`;
   if(!SAMPLE)return;
   $('#ab').onclick=async()=>{
@@ -2008,7 +2312,7 @@ function pSettings(){
    <label class="f">Games ki raftaar<select id="gsp"><option value="slow">Dheere</option><option value="normal">Normal</option></select></label>
    <label class="f">Roz ki screen limit (min)<select id="sl"><option>15</option><option>20</option><option>25</option><option>30</option></select></label>
    <label class="f">Report card ke 3 goals<input id="t0" value="${esc(PROFILE.targets[0])}"><input id="t1" value="${esc(PROFILE.targets[1])}"><input id="t2" value="${esc(PROFILE.targets[2])}"></label>
-   ${VOICE?`<label class="f">Claude API key (optional)<input id="sk" type="password" value="${esc(PROFILE.apiKey||'')}" placeholder="sk-ant-..."><span class="muted small">Daalne par characters Shivansh ki har alag baat par khud naya jawab sochte hain. Kharch aapke Anthropic account se. Key sirf isi phone mein rehti hai.</span></label>`:''}
+
    <button class="cta" id="ss">Save karein</button></div>`;
   $('#sp').value=String(PROFILE.rate);$('#sl').value=String(PROFILE.limitMin);$('#gsp').value=PROFILE.gameSpeed||'slow';
   const showV=()=>{loadVoices();const v=pickVoice('en','f');$('#vl').textContent=v?`Awaaz: ${v.name} (${v.lang})`:'Indian English awaaz nahi mili. Android: Settings → Text-to-speech → Google → English (India) download karein.'};showV();setTimeout(showV,900);
@@ -2017,15 +2321,15 @@ function pSettings(){
   $('#vt3').onclick=()=>say('Uncle, I want a chocolate, please.',KIDV());
   if(VOICE){$('#vm').value=PROFILE.voiceOff?'0':'1';$('#vr').value=PROFILE.recLang||'en-IN';
     $('#mt').onclick=()=>{if(!SR){$('#mtr').textContent='Is browser mein mic se sunna nahi chalta. Google Chrome use karein.';return}PROFILE.recLang=$('#vr').value;$('#mtr').textContent='🎤 Kuch boliye… (jaise: I want chocolate)';startRec(t=>{$('#mtr').textContent='Sun raha hoon: '+translit(t)},f=>{$('#mtr').textContent=f?'Suna: "'+translit(f.text)+'" ✓':'Kuch sunai nahi diya. Chrome mein mic Allow karein.'})}}
-  $('#ss').onclick=async()=>{if(VOICE){PROFILE.voiceOff=$('#vm').value!=='1';PROFILE.recLang=$('#vr').value;PROFILE.apiKey=$('#sk').value.trim();SAMPLE=apiSample()}
+  $('#ss').onclick=async()=>{if(VOICE){PROFILE.voiceOff=$('#vm').value!=='1';PROFILE.recLang=$('#vr').value;}
     PROFILE={...PROFILE,name:$('#sn').value.trim()||'Shivansh',interests:$('#si').value.split(',').map(x=>x.trim()).filter(Boolean),rate:+$('#sp').value,gameSpeed:$('#gsp').value,limitMin:+$('#sl').value,targets:[$('#t0').value,$('#t1').value,$('#t2').value].map(x=>x.trim()||'Goal')};await Store.profile();toast('Save ho gaya')};
 }
 
 /* ================= BOOT ================= */
 go('splash');
 (async()=>{
-  if(VOICE){SAMPLE=apiSample();setTimeout(micBanner,500)}
-  try{const c=window.claude;if(c&&c.use){const [db,sm]=await Promise.all([c.use('db').catch(()=>null),c.use('sample').catch(()=>null)]);DB=db;SAMPLE=sm}}catch(e){}
+  SAMPLE=keySample();if(VOICE)setTimeout(micBanner,500);
+  try{const c=window.claude;if(c&&c.use){const [db,sm]=await Promise.all([c.use('db').catch(()=>null),c.use('sample').catch(()=>null)]);DB=db;if(sm){NATIVE_SAMPLE=sm;SAMPLE=sm}}}catch(e){}
   await Store.pull();
   if(current==='home')SCREENS.home();
 })();
